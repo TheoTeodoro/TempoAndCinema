@@ -1,0 +1,30 @@
+﻿@model TempoAndCinema.Dtos.TmdbMovieDetailsDto
+@{
+    var images = ViewBag.Images as TempoAndCinema.Dtos.TmdbImageResponseDto;
+}
+
+<h2>@Model.Title</h2>
+
+<img src="https://image.tmdb.org/t/p/w400@Model.Poster_Path" class="mb-3" />
+
+<p><strong>Título Original:</strong> @Model.Original_Title</p>
+<p><strong>Lançamento:</strong> @Model.Release_Date</p>
+<p><strong>Duração:</strong> @Model.Runtime min</p>
+<p><strong>Nota:</strong> @Model.Vote_Average</p>
+<p><strong>Sinopse:</strong> @Model.Overview</p>
+
+<h4>Gêneros</h4>
+<p>@string.Join(", ", Model.Genres.Select(g => g.Name))</p>
+
+@if (images?.Backdrops?.Any() == true)
+{
+    <h4>Imagens</h4>
+    <div class="row">
+        @foreach (var img in images.Backdrops.Take(4))
+        {
+            <div class="col-md-3 mb-3">
+                <img src="https://image.tmdb.org/t/p/w300@img.File_Path" class="img-fluid rounded" />
+            </div>
+        }
+    </div>
+}
