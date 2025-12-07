@@ -120,5 +120,46 @@ namespace TempoAndCinema.Services.Tmdb
 
             return result;
         }
+        
+        public async Task<TmdbCreditsDto?> GetMovieCreditsAsync(int movieId)
+        {
+            string cacheKey = $"tmdb_credits_{movieId}";
+
+            if (_cache.TryGetValue(cacheKey, out TmdbCreditsDto cached))
+                return cached;
+
+            string url = $"{BaseUrl}/movie/{movieId}/credits?api_key={_apiKey}&language=pt-BR";
+
+            var response = await _http.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+
+            var result = JsonSerializer.Deserialize<TmdbCreditsDto>(json, _jsonOptions);
+
+            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(30));
+
+            return result;
+        }
+        
+        public async Task<TmdbVideosDto?> GetMovieVideosAsync(int movieId)
+        {
+            string cacheKey = $"tmdb_videos_{movieId}";
+
+            if (_cache.TryGetValue(cacheKey, out TmdbVideosDto cached))
+                return cached;
+
+            string url = $"{BaseUrl}/movie/{movieId}/videos?api_key={_apiKey}&language=pt-BR";
+
+            var response = await _http.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+
+            var result = JsonSerializer.Deserialize<TmdbVideosDto>(json, _jsonOptions);
+
+            _cache.Set(cacheKey, result, TimeSpan.FromMinutes(30));
+
+            return result;
+        }
+
     }
 }

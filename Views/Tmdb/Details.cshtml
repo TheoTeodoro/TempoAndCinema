@@ -1,30 +1,98 @@
-﻿@model TempoAndCinema.Dtos.TmdbMovieDetailsDto
+﻿@using TempoAndCinema.Dtos
+@model TempoAndCinema.Dtos.TmdbMovieDetailsDto
+
 @{
-    var images = ViewBag.Images as TempoAndCinema.Dtos.TmdbImageResponseDto;
+ViewData["Title"] = Model.Title;
+
+var baseUrl = ViewBag.BaseUrl;
+var posterSize = ViewBag.PosterSize;
+var backdropSize = ViewBag.BackdropSize;
+
+var images = ViewBag.Images as TmdbImageResponseDto ?? new TmdbImageResponseDto();
+var credits = ViewBag.Credits as TmdbCreditsDto ?? new TmdbCreditsDto { Cast = new List<CastDto>() };
+var videos = ViewBag.Videos as TmdbVideosDto ?? new TmdbVideosDto();
+
+string trailer = videos?.Results?
+.FirstOrDefault(v => v.Type == "Trailer" && v.Site == "YouTube")?.Key;
+
+string elencoTxt = string.Join(", ", credits.Cast.Take(8).Select(c => c.Name));
 }
 
-<h2>@Model.Title</h2>
+<div class="container mt-4">
+    <a asp-action="Search" class="btn btn-secondary mb-3">&larr; Voltar</a>
 
-<img src="https://image.tmdb.org/t/p/w400@Model.Poster_Path" class="mb-3" />
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="row g-0">
 
-<p><strong>Título Original:</strong> @Model.Original_Title</p>
-<p><strong>Lançamento:</strong> @Model.Release_Date</p>
-<p><strong>Duração:</strong> @Model.Runtime min</p>
-<p><strong>Nota:</strong> @Model.Vote_Average</p>
-<p><strong>Sinopse:</strong> @Model.Overview</p>
-
-<h4>Gêneros</h4>
-<p>@string.Join(", ", Model.Genres.Select(g => g.Name))</p>
-
-@if (images?.Backdrops?.Any() == true)
-{
-    <h4>Imagens</h4>
-    <div class="row">
-        @foreach (var img in images.Backdrops.Take(4))
-        {
-            <div class="col-md-3 mb-3">
-                <img src="https://image.tmdb.org/t/p/w300@img.File_Path" class="img-fluid rounded" />
+            <div class="col-md-4">
+                <img class="img-fluid rounded-start"
+                     src="@($"{baseUrl}{posterSize}{Model.Poster_Path}")" />
             </div>
+
+            <div class="col-md-8 p-4">
+                <h2 class="fw-bold">@Model.Title</h2>
+                <h5 class="text-muted">@Model.Original_Title</h5>
+
+                <p class="mt-3">@Model.Overview</p>
+
+                <p><strong>Duração:</strong> @(Model.Runtime ?? 0) min</p>
+                <p><strong>Lançamento:</strong> @Model.Release_Date</p>
+                <p><strong>Gêneros:</strong> @string.Join(", ", Model.Genres.Select(g => g.Name))</p>
+                <p><strong>Idioma Original:</strong> @Model.Original_Language</p>
+                <p><strong>Nota Média:</strong> ⭐ @Model.Vote_Average</p>
+                <p><strong>Elenco Principal:</strong> @elencoTxt</p>
+
+                <form asp-action="ImportToLocal" method="post" class="mt-3">
+                    <input type="hidden" name="tmdbId" value="@Model.Id" />
+                    <button class="btn btn-success">💾 Salvar no Banco Local</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRAILER -->
+    @if (trailer != null)
+    {
+    <h3 class="fw-bold">Trailer</h3>
+    <div class="ratio ratio-16x9 mb-4">
+        <iframe src="https://www.youtube.com/embed/@trailer" allowfullscreen></iframe>
+    </div>
+    }
+
+    <!-- ELENCO -->
+    <h3 class="fw-bold">Elenco</h3>
+    <div class="d-flex overflow-auto gap-3 mb-4">
+        @foreach (var c in credits.Cast.Take(15))
+        {
+        <div class="text-center">
+            @if (!string.IsNullOrWhiteSpace(c.Profile_Path))
+            {
+            <img src="@($"{baseUrl}w185{c.Profile_Path}")"
+                 class="rounded shadow mb-1"
+                 style="width: 120px; height: 170px; object-fit: cover;" />
+            }
+            else
+            {
+            <div class="bg-secondary text-white rounded mb-1 d-flex 
+                         align-items-center justify-content-center"
+                 style="width: 120px; height: 170px;">
+                Sem foto
+            </div>
+            }
+            <small><strong>@c.Name</strong><br />@c.Character</small>
+        </div>
         }
     </div>
-}
+
+    <!-- IMAGENS -->
+    <h3 class="fw-bold">Imagens</h3>
+    <div class="d-flex overflow-auto gap-3 mb-4">
+        @foreach (var img in images.Backdrops.Take(10))
+        {
+        <img src="@($"{baseUrl}{backdropSize}{img.File_Path}")"
+             class="rounded shadow"
+             style="height: 200px; object-fit: cover;" />
+        }
+    </div>
+
+</div>

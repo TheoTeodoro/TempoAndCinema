@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-namespace TempoAndCinema.Data;
-using TempoAndCinema.Models;
+﻿using TempoAndCinema.Models;
 
-public interface IFilmeRepository
+namespace TempoAndCinema.Data
 {
-    Task<int> CreateAsync(Filme filme);
-    Task<Filme?> GetByIdAsync(int id);
-    Task<IEnumerable<Filme>> ListAsync();
-    Task UpdateAsync(Filme filme);
-    Task DeleteAsync(int id);
+    public interface IFilmeRepository
+    {
+        Task<List<Filme>> GetAllAsync();
+        Task<Filme?> GetByIdAsync(int id);
+        Task<Filme?> GetByTmdbIdAsync(int tmdbId);
+        Task<int> AddAsync(Filme filme);
+        Task UpdateAsync(Filme filme);
+        Task DeleteAsync(int id);
+    }
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using TempoAndCinema.Data;
 using TempoAndCinema.Services.Tmdb;
 
@@ -8,6 +9,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IFilmeRepository, FilmeRepository>();
 builder.Services.AddHttpClient<ITmdbApiService, TmdbApiService>();
 builder.Services.AddScoped<ITmdbConfigurationUrlHelper, TmdbConfigurationUrlHelper>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 

@@ -1,90 +1,151 @@
 ﻿using Dapper;
 using Microsoft.Data.Sqlite;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using TempoAndCinema.Models;
-using TempoAndCinema.Data;
 
-public class FilmeRepository : IFilmeRepository
+namespace TempoAndCinema.Data
 {
-    private readonly string _connectionString = "Data Source=C:\\Users\\lucay\\Desktop\\TempoAndCinema-main\\Data\\catalog.db";
-    public async Task<int> CreateAsync(Filme filme)
+    public class FilmeRepository : IFilmeRepository
     {
-        using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync();
+        private readonly string _connectionString;
 
-        string sql = @"
-            INSERT INTO Filmes
-            (TmdbId, Titulo, TituloOriginal, Sinopse, DataLancamento, Genero, PosterPath, Lingua,
-             Duracao, NotaMedia, ElencoPrincipal, CidadeReferencia, Latitude, Longitude,
-             DataCriacao, DataAtualizacao)
-            VALUES
-            (@TmdbId, @Titulo, @TituloOriginal, @Sinopse, @DataLancamento, @Genero, @PosterPath, @Lingua,
-             @Duracao, @NotaMedia, @ElencoPrincipal, @CidadeReferencia, @Latitude, @Longitude,
-             @DataCriacao, @DataAtualizacao);
+        public FilmeRepository(IConfiguration config)
+        {
+            _connectionString = config.GetConnectionString("DefaultConnection")
+                ?? throw new Exception("Connection string 'DefaultConnection' não encontrada.");
+        }
 
-            SELECT last_insert_rowid();
-        ";
+        private SqliteConnection CreateConnection()
+            => new SqliteConnection(_connectionString);
 
-        int id = await connection.ExecuteScalarAsync<int>(sql, filme);
-        return id;
-    }
+        public async Task<List<Filme>> GetAllAsync()
+        {
+            using var conn = CreateConnection();
+            await conn.OpenAsync();
+            string sql = @"SELECT * FROM Filmes ORDER BY DataCriacao DESC";
+            var result = await conn.QueryAsync<Filme>(sql);
+            return result.ToList();
+        }
 
-    public async Task<Filme?> GetByIdAsync(int id)
-    {
-        using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync();
+        public async Task<Filme?> GetByIdAsync(int id)
+        {
+            using var conn = CreateConnection();
+            await conn.OpenAsync();
+            string sql = @"SELECT * FROM Filmes WHERE Id = @Id";
+            return await conn.QueryFirstOrDefaultAsync<Filme>(sql, new { Id = id });
+        }
 
-        string sql = @"SELECT * FROM Filmes WHERE Id = @Id";
+        public async Task<Filme?> GetByTmdbIdAsync(int tmdbId)
+        {
+            using var conn = CreateConnection();
+            await conn.OpenAsync();
+            string sql = @"SELECT * FROM Filmes WHERE TmdbId = @TmdbId";
+            return await conn.QueryFirstOrDefaultAsync<Filme>(sql, new { TmdbId = tmdbId });
+        }
 
-        return await connection.QueryFirstOrDefaultAsync<Filme>(sql, new { Id = id });
-    }
+        public async Task<int> AddAsync(Filme filme)
+        {
+            using var conn = CreateConnection();
+            // force open
+            await conn.OpenAsync();
 
-    public async Task<IEnumerable<Filme>> ListAsync()
-    {
-        using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync();
+            string sql = @"
+                INSERT INTO Filmes 
+                (TmdbId, Titulo, TituloOriginal, Sinopse, DataLancamento, Genero, PosterPath,
+                Lingua, Duracao, NotaMedia, TrailerUrl, ElencoPrincipal, BackdropsJson,
+                CidadeReferencia, Latitude, Longitude, DataCriacao, DataAtualizacao)
+                VALUES
+                (@TmdbId, @Titulo, @TituloOriginal, @Sinopse, @DataLancamento, @Genero, @PosterPath,
+                @Lingua, @Duracao, @NotaMedia, @TrailerUrl, @ElencoPrincipal, @BackdropsJson,
+                @CidadeReferencia, @Latitude, @Longitude, @DataCriacao, @DataAtualizacao);
 
-        string sql = @"SELECT * FROM Filmes ORDER BY Id DESC";
+                SELECT last_insert_rowid();
+            ";
 
-        return await connection.QueryAsync<Filme>(sql);
-    }
 
-    public async Task UpdateAsync(Filme filme)
-    {
-        using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync();
+            var parameters = new
+            {
+                filme.TmdbId,
+                filme.Titulo,
+                filme.TituloOriginal,
+                filme.Sinopse,
+                DataLancamento = filme.DataLancamento?.ToString("yyyy-MM-dd"),
+                filme.Genero,
+                filme.PosterPath,
+                filme.Lingua,
+                filme.Duracao,
+                filme.NotaMedia,
 
-        string sql = @"
-            UPDATE Filmes SET
-                TmdbId = @TmdbId,
-                Titulo = @Titulo,
-                TituloOriginal = @TituloOriginal,
-                Sinopse = @Sinopse,
-                DataLancamento = @DataLancamento,
-                Genero = @Genero,
-                PosterPath = @PosterPath,
-                Lingua = @Lingua,
-                Duracao = @Duracao,
-                NotaMedia = @NotaMedia,
-                ElencoPrincipal = @ElencoPrincipal,
-                CidadeReferencia = @CidadeReferencia,
-                Latitude = @Latitude,
-                Longitude = @Longitude,
-                DataAtualizacao = @DataAtualizacao
-            WHERE Id = @Id
-        ";
+                filme.ElencoPrincipal,
+                BackdropsJson = filme.BackdropsJson,
+                filme.TrailerUrl,
 
-        await connection.ExecuteAsync(sql, filme);
-    }
+                filme.CidadeReferencia,
+                filme.Latitude,
+                filme.Longitude,
 
-    public async Task DeleteAsync(int id)
-    {
-        using var connection = new SqliteConnection(_connectionString);
-        await connection.OpenAsync();
+                DataCriacao = filme.DataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
+                DataAtualizacao = filme.DataAtualizacao.ToString("yyyy-MM-dd HH:mm:ss")
+            };
 
-        string sql = @"DELETE FROM Filmes WHERE Id = @Id";
 
-        await connection.ExecuteAsync(sql, new { Id = id });
+            // execute scalar returns long sometimes — be permissivo
+            var scalar = await conn.ExecuteScalarAsync<long>(sql, parameters);
+            return (int)scalar;
+        }
+
+        public async Task UpdateAsync(Filme filme)
+        {
+            using var conn = CreateConnection();
+            await conn.OpenAsync();
+
+            string sql = @"
+                UPDATE Filmes SET
+                    Titulo = @Titulo,
+                    TituloOriginal = @TituloOriginal,
+                    Sinopse = @Sinopse,
+                    DataLancamento = @DataLancamento,
+                    Genero = @Genero,
+                    PosterPath = @PosterPath,
+                    Lingua = @Lingua,
+                    Duracao = @Duracao,
+                    NotaMedia = @NotaMedia,
+                    ElencoPrincipal = @ElencoPrincipal,
+                    CidadeReferencia = @CidadeReferencia,
+                    Latitude = @Latitude,
+                    Longitude = @Longitude,
+                    DataAtualizacao = @DataAtualizacao
+                WHERE Id = @Id
+            ";
+
+            var parameters = new
+            {
+                filme.Id,
+                filme.Titulo,
+                filme.TituloOriginal,
+                filme.Sinopse,
+                DataLancamento = filme.DataLancamento?.ToString("yyyy-MM-dd"),
+                filme.Genero,
+                filme.PosterPath,
+                filme.Lingua,
+                filme.Duracao,
+                filme.NotaMedia,
+                filme.ElencoPrincipal,
+                filme.CidadeReferencia,
+                filme.Latitude,
+                filme.Longitude,
+                DataAtualizacao = filme.DataAtualizacao.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+
+            await conn.ExecuteAsync(sql, parameters);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            using var conn = CreateConnection();
+            await conn.OpenAsync();
+
+            string sql = "DELETE FROM Filmes WHERE Id = @Id";
+            await conn.ExecuteAsync(sql, new { Id = id });
+        }
     }
 }

@@ -1,0 +1,110 @@
+﻿@model TempoAndCinema.Models.Filme
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Detalhes";
+
+    var elenco = ViewBag.ElencoCompleto as List<string> ?? new List<string>();
+    var imagens = ViewBag.Imagens as List<string> ?? new List<string>();
+}
+
+<div class="container py-4">
+
+    <!-- TOPO: BACKDROP -->
+    @if (imagens.Any())
+    {
+        <div class="position-relative mb-4">
+            <img src="@imagens.First()" class="img-fluid w-100 rounded shadow" style="max-height:420px; object-fit:cover;" />
+            <div class="position-absolute bottom-0 start-0 bg-dark bg-opacity-50 text-white p-3 rounded-end">
+                <h2 class="fw-bold">@Model.Titulo</h2>
+                <p class="m-0">@Model.Genero • @Model.DataLancamento?.ToString("yyyy")</p>
+            </div>
+        </div>
+    }
+
+    <!-- NAVEGAÇÃO -->
+    <div class="d-flex justify-content-between mb-3">
+        <a class="btn btn-secondary" href="/Filmes">← Voltar</a>
+
+        <div class="d-flex gap-2">
+            <a href="/Filmes/Edit/@Model.Id" class="btn btn-warning">✏ Editar</a>
+            <a href="/Filmes/Delete/@Model.Id" class="btn btn-danger">🗑 Deletar</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- POSTER -->
+        <div class="col-md-3">
+            <img src="@Model.PosterPath" class="img-fluid rounded shadow" alt="@Model.Titulo" />
+
+            <ul class="list-group mt-4">
+                <li class="list-group-item"><strong>Idioma:</strong> @Model.Lingua?.ToUpper()</li>
+                <li class="list-group-item"><strong>Duração:</strong> @Model.Duracao min</li>
+                <li class="list-group-item"><strong>Lançamento:</strong> @Model.DataLancamento?.ToString("dd/MM/yyyy")</li>
+                <li class="list-group-item"><strong>Nota Média:</strong> @Model.NotaMedia</li>
+            </ul>
+        </div>
+
+        <!-- INFORMAÇÕES -->
+        <div class="col-md-9">
+
+            <h1 class="fw-bold">@Model.Titulo</h1>
+            <h5 class="text-muted">@Model.TituloOriginal</h5>
+
+            <div class="mt-2">
+                <span class="badge bg-primary fs-6">@Model.Genero</span>
+                <span class="badge bg-warning text-dark fs-6">⭐ @Model.NotaMedia</span>
+            </div>
+
+            <h4 class="mt-4">Sinopse</h4>
+            <p>@Model.Sinopse</p>
+
+            <!-- 🎬 TRAILER -->
+            @if (!string.IsNullOrEmpty(Model.TrailerUrl))
+            {
+                <h3 class="mt-5">Trailer Oficial</h3>
+                <div class="ratio ratio-16x9 shadow rounded">
+                    <iframe src="@Model.TrailerUrl" allowfullscreen></iframe>
+                </div>
+            }
+
+            <!-- 👥 ELENCO -->
+            <h3 class="mt-5">Elenco Principal</h3>
+
+            @if (elenco.Any())
+            {
+                <ul class="list-group">
+                    @foreach (var ator in elenco)
+                    {
+                        <li class="list-group-item">@ator</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p class="text-muted">Nenhum elenco disponível.</p>
+            }
+
+        </div>
+    </div>
+
+    <!-- 🖼 BACKDROPS -->
+    <h3 class="mt-5 mb-3">Imagens</h3>
+
+    @if (imagens.Any())
+    {
+        <div class="row g-3">
+            @foreach (var img in imagens)
+            {
+                <div class="col-md-4">
+                    <img src="@img" class="img-fluid rounded shadow" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Nenhuma imagem disponível.</p>
+    }
+
+</div>
