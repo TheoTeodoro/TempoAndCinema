@@ -1,0 +1,14 @@
+﻿@model WeatherResponse
+
+<h2>Previsão de Hoje</h2>
+
+@if (Model == null || Model.Daily == null)
+{
+    <p>Nenhum dado encontrado.</p>
+}
+else
+{
+    <p><strong>Data:</strong> @Model.Daily.Time[0]</p>
+    <p><strong>Temperatura Mínima:</strong> @Model.Daily.Temperature_2m_Min[0] °C</p>
+    <p><strong>Temperatura Máxima:</strong> @Model.Daily.Temperature_2m_Max[0] °C</p>
+}

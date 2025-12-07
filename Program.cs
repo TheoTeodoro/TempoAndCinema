@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TempoAndCinema.Data;
 using TempoAndCinema.Services.Tmdb;
+using TempoAndCinema.Services.Weather;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,11 @@ builder.Services.AddScoped<ITmdbConfigurationUrlHelper, TmdbConfigurationUrlHelp
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpClient<IWeatherApiService, WeatherApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://api.open-meteo.com/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 var app = builder.Build();
 
