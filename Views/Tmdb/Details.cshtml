@@ -2,97 +2,112 @@
 @model TempoAndCinema.Dtos.TmdbMovieDetailsDto
 
 @{
-ViewData["Title"] = Model.Title;
+	ViewData["Title"] = Model.Title;
+	var clima = ViewBag.Weather as WeatherDto;
 
-var baseUrl = ViewBag.BaseUrl;
-var posterSize = ViewBag.PosterSize;
-var backdropSize = ViewBag.BackdropSize;
+	var baseUrl = ViewBag.BaseUrl;
+	var posterSize = ViewBag.PosterSize;
+	var backdropSize = ViewBag.BackdropSize;
 
-var images = ViewBag.Images as TmdbImageResponseDto ?? new TmdbImageResponseDto();
-var credits = ViewBag.Credits as TmdbCreditsDto ?? new TmdbCreditsDto { Cast = new List<CastDto>() };
-var videos = ViewBag.Videos as TmdbVideosDto ?? new TmdbVideosDto();
+	var images = ViewBag.Images as TmdbImageResponseDto ?? new TmdbImageResponseDto();
+	var credits = ViewBag.Credits as TmdbCreditsDto ?? new TmdbCreditsDto { Cast = new List<CastDto>() };
+	var videos = ViewBag.Videos as TmdbVideosDto ?? new TmdbVideosDto();
 
-string trailer = videos?.Results?
-.FirstOrDefault(v => v.Type == "Trailer" && v.Site == "YouTube")?.Key;
+	string trailer = videos?.Results?
+	.FirstOrDefault(v => v.Type == "Trailer" && v.Site == "YouTube")?.Key;
 
-string elencoTxt = string.Join(", ", credits.Cast.Take(8).Select(c => c.Name));
+	string elencoTxt = string.Join(", ", credits.Cast.Take(8).Select(c => c.Name));
 }
 
 <div class="container mt-4">
-    <a asp-action="Search" class="btn btn-secondary mb-3">&larr; Voltar</a>
+	<a asp-action="Search" class="btn btn-secondary mb-3">&larr; Voltar</a>
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="row g-0">
+	<div class="card border-0 shadow-sm mb-4">
+		<div class="row g-0">
 
-            <div class="col-md-4">
-                <img class="img-fluid rounded-start"
-                     src="@($"{baseUrl}{posterSize}{Model.Poster_Path}")" />
-            </div>
+			<div class="col-md-4">
+				<img class="img-fluid rounded-start"
+					 src="@($"{baseUrl}{posterSize}{Model.Poster_Path}")" />
+			</div>
 
-            <div class="col-md-8 p-4">
-                <h2 class="fw-bold">@Model.Title</h2>
-                <h5 class="text-muted">@Model.Original_Title</h5>
+			<div class="col-md-8 p-4">
+				<h2 class="fw-bold">@Model.Title</h2>
+				<h5 class="text-muted">@Model.Original_Title</h5>
 
-                <p class="mt-3">@Model.Overview</p>
+				<p class="mt-3">@Model.Overview</p>
 
-                <p><strong>Duração:</strong> @(Model.Runtime ?? 0) min</p>
-                <p><strong>Lançamento:</strong> @Model.Release_Date</p>
-                <p><strong>Gêneros:</strong> @string.Join(", ", Model.Genres.Select(g => g.Name))</p>
-                <p><strong>Idioma Original:</strong> @Model.Original_Language</p>
-                <p><strong>Nota Média:</strong> ⭐ @Model.Vote_Average</p>
-                <p><strong>Elenco Principal:</strong> @elencoTxt</p>
+				<p><strong>Duração:</strong> @(Model.Runtime ?? 0) min</p>
+				<p><strong>Lançamento:</strong> @Model.Release_Date</p>
+				<p><strong>Gêneros:</strong> @string.Join(", ", Model.Genres.Select(g => g.Name))</p>
+				<p><strong>Idioma Original:</strong> @Model.Original_Language</p>
+				<p><strong>Nota Média:</strong> ⭐ @Model.Vote_Average</p>
+				<p><strong>Elenco Principal:</strong> @elencoTxt</p>
+				@if (clima != null)
+				{
+					<h3 class="mt-4">⛅ Clima da cidade do filme</h3>
+					<div class="d-flex flex-wrap gap-3">
+						@for (int i = 0; i < clima.Daily.Time.Count; i++)
+						{
+							<div class="border rounded p-2 shadow-sm">
+								<strong>@clima.Daily.Time[i]</strong><br />
+								Máx: @clima.Daily.Temperature_2m_Max[i]°C<br />
+								Min: @clima.Daily.Temperature_2m_Min[i]°C
+							</div>
+						}
+					</div>
+				}
 
-                <form asp-action="ImportToLocal" method="post" class="mt-3">
-                    <input type="hidden" name="tmdbId" value="@Model.Id" />
-                    <button class="btn btn-success">💾 Salvar no Banco Local</button>
-                </form>
-            </div>
-        </div>
-    </div>
+				<form asp-action="ImportToLocal" method="post" class="mt-3">
+					<input type="hidden" name="tmdbId" value="@Model.Id" />
+					<button class="btn btn-success">💾 Salvar no Banco Local</button>
+				</form>
+			</div>
+		</div>
+	</div>
 
-    <!-- TRAILER -->
-    @if (trailer != null)
-    {
-    <h3 class="fw-bold">Trailer</h3>
-    <div class="ratio ratio-16x9 mb-4">
-        <iframe src="https://www.youtube.com/embed/@trailer" allowfullscreen></iframe>
-    </div>
-    }
+	<!-- TRAILER -->
+	@if (trailer != null)
+	{
+		<h3 class="fw-bold">Trailer</h3>
+		<div class="ratio ratio-16x9 mb-4">
+			<iframe src="https://www.youtube.com/embed/@trailer" allowfullscreen></iframe>
+		</div>
+	}
 
-    <!-- ELENCO -->
-    <h3 class="fw-bold">Elenco</h3>
-    <div class="d-flex overflow-auto gap-3 mb-4">
-        @foreach (var c in credits.Cast.Take(15))
-        {
-        <div class="text-center">
-            @if (!string.IsNullOrWhiteSpace(c.Profile_Path))
-            {
-            <img src="@($"{baseUrl}w185{c.Profile_Path}")"
-                 class="rounded shadow mb-1"
-                 style="width: 120px; height: 170px; object-fit: cover;" />
-            }
-            else
-            {
-            <div class="bg-secondary text-white rounded mb-1 d-flex 
+	<!-- ELENCO -->
+	<h3 class="fw-bold">Elenco</h3>
+	<div class="d-flex overflow-auto gap-3 mb-4">
+		@foreach (var c in credits.Cast.Take(15))
+		{
+			<div class="text-center">
+				@if (!string.IsNullOrWhiteSpace(c.Profile_Path))
+				{
+					<img src="@($"{baseUrl}w185{c.Profile_Path}")"
+						 class="rounded shadow mb-1"
+						 style="width: 120px; height: 170px; object-fit: cover;" />
+				}
+				else
+				{
+					<div class="bg-secondary text-white rounded mb-1 d-flex
                          align-items-center justify-content-center"
-                 style="width: 120px; height: 170px;">
-                Sem foto
-            </div>
-            }
-            <small><strong>@c.Name</strong><br />@c.Character</small>
-        </div>
-        }
-    </div>
+						 style="width: 120px; height: 170px;">
+						Sem foto
+					</div>
+				}
+				<small><strong>@c.Name</strong><br />@c.Character</small>
+			</div>
+		}
+	</div>
 
-    <!-- IMAGENS -->
-    <h3 class="fw-bold">Imagens</h3>
-    <div class="d-flex overflow-auto gap-3 mb-4">
-        @foreach (var img in images.Backdrops.Take(10))
-        {
-        <img src="@($"{baseUrl}{backdropSize}{img.File_Path}")"
-             class="rounded shadow"
-             style="height: 200px; object-fit: cover;" />
-        }
-    </div>
+	<!-- IMAGENS -->
+	<h3 class="fw-bold">Imagens</h3>
+	<div class="d-flex overflow-auto gap-3 mb-4">
+		@foreach (var img in images.Backdrops.Take(10))
+		{
+			<img src="@($"{baseUrl}{backdropSize}{img.File_Path}")"
+				 class="rounded shadow"
+				 style="height: 200px; object-fit: cover;" />
+		}
+	</div>
 
 </div>

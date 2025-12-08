@@ -1,21 +1,27 @@
 ﻿using System.Text.Json;
+using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using TempoAndCinema.Data;
+using TempoAndCinema.Service;
 using TempoAndCinema.Models;
+using TempoAndCinema.Service.Weather;
 
 namespace TempoAndCinema.Controllers
 {
     public class FilmesController : Controller
     {
         private readonly IFilmeRepository _repo;
+		private readonly IWeatherApiService _weather;
 
-        public FilmesController(IFilmeRepository repo)
-        {
-            _repo = repo;
-        }
+		public FilmesController(IFilmeRepository repo, IWeatherApiService weather)
+		{
+			_repo = repo;
+			_weather = weather;
+		}
 
-        // GET: /Filmes
-        public async Task<IActionResult> Index(string message = null)
+		// GET: /Filmes
+		public async Task<IActionResult> Index(string message = null)
         {
             var filmes = await _repo.GetAllAsync();
             ViewBag.Message = message;
@@ -69,7 +75,23 @@ namespace TempoAndCinema.Controllers
             ViewBag.Imagens = imagens;
             ViewBag.ElencoCompleto = elenco;
 
-            return View(filme);
+			// CLIMA 
+			if (filme.Latitude.HasValue && filme.Longitude.HasValue)
+			{
+				var clima = await _weather.GetWeatherAsync(
+					filme.Latitude.Value,
+					filme.Longitude.Value
+				);
+
+                ViewBag.Weather = clima;
+			}
+			else
+			{
+				ViewBag.Weather = null;
+			}
+
+
+			return View(filme);
         }
 
 
@@ -154,8 +176,23 @@ namespace TempoAndCinema.Controllers
         {
             if (!ModelState.IsValid)
                 return View(filme);
-            
-            
+
+            // Carrega o registro atual do banco
+            var atual = await _repo.GetByIdAsync(filme.Id);
+            if (atual == null) return NotFound();
+
+            // ----------- Atualiza campos simples -----------
+
+            atual.Titulo = filme.Titulo;
+            atual.TituloOriginal = filme.TituloOriginal;
+            atual.Sinopse = filme.Sinopse;
+            atual.DataLancamento = filme.DataLancamento;
+            atual.Genero = filme.Genero;
+            atual.PosterPath = filme.PosterPath;
+            atual.Lingua = filme.Lingua;
+            atual.Duracao = filme.Duracao;
+
+            // ----------- Elenco (CSV → JSON) -----------
             if (!string.IsNullOrWhiteSpace(filme.ElencoPrincipal))
             {
                 var lista = filme.ElencoPrincipal
@@ -163,21 +200,48 @@ namespace TempoAndCinema.Controllers
                     .Select(x => x.Trim())
                     .ToList();
 
-                filme.ElencoPrincipal = JsonSerializer.Serialize(lista);
+                atual.ElencoPrincipal = JsonSerializer.Serialize(lista);
             }
 
+            // ----------- Latitude / Longitude: conversão segura -----------
+            var latStr = Request.Form["Latitude"].FirstOrDefault();
+            var lonStr = Request.Form["Longitude"].FirstOrDefault();
 
-            filme.DataAtualizacao = DateTime.Now;
-            filme.NotaMedia = double.TryParse(
-                filme.NotaMedia.ToString().Replace(",", "."),
-                System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture,
-                out var nota
-            ) ? nota : 0;
+            if (!string.IsNullOrWhiteSpace(latStr))
+            {
+                if (double.TryParse(latStr, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out var lat))
+                    atual.Latitude = lat;
+                else if (double.TryParse(latStr, out var latFallback))
+                    atual.Latitude = latFallback;
+            }
 
-            await _repo.UpdateAsync(filme);
+            if (!string.IsNullOrWhiteSpace(lonStr))
+            {
+                if (double.TryParse(lonStr, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out var lon))
+                    atual.Longitude = lon;
+                else if (double.TryParse(lonStr, out var lonFallback))
+                    atual.Longitude = lonFallback;
+            }
+
+            // ----------- NotaMedia (não zerar) -----------
+            var notaStr = Request.Form["NotaMedia"].FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(notaStr))
+            {
+                if (double.TryParse(notaStr.Replace(",", "."), System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out var notaParsed))
+                    atual.NotaMedia = notaParsed;
+            }
+
+            // ----------- Auditoria -----------
+            atual.DataAtualizacao = DateTime.Now;
+
+            await _repo.UpdateAsync(atual);
+
             return RedirectToAction(nameof(Index), new { message = "Filme editado com sucesso!" });
         }
+
 
         // GET: /Filmes/Delete/5
         public async Task<IActionResult> Delete(int id)

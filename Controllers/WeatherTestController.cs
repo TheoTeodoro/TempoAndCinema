@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TempoAndCinema.Services.Weather;
+using TempoAndCinema.Service.Weather;
 
 namespace TempoAndCinema.Controllers
 {
-	public class WeatherTestController : Controller
+    public class WeatherTestController : Controller
 	{
 		private readonly IWeatherApiService _weatherService;
 

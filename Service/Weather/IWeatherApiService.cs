@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using TempoAndCinema.Dtos;
 
-namespace TempoAndCinema.Services.Weather
+namespace TempoAndCinema.Service.Weather
 {
     public interface IWeatherApiService
     {

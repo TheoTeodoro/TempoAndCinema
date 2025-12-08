@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TempoAndCinema.Data;
+using TempoAndCinema.Service.Weather;
 using TempoAndCinema.Services.Tmdb;
-using TempoAndCinema.Services.Weather;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -47,9 +47,24 @@
                         <label class="form-label">Idioma</label>
                         <input asp-for="Lingua" class="form-control" />
                     </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Latitude</label>
+                        <input asp-for="Latitude"
+                               value="@Model.Latitude?.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture)"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Longitude</label>
+                        <input asp-for="Longitude"
+                               value="@Model.Longitude?.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture)"
+                               class="form-control" />
+                    </div>
+
                     <div class="col-12 mt-3">
                         <button type="submit" class="btn btn-warning w-100">Salvar Alterações</button>
                     </div>
+
                 </div>
             </form>
 

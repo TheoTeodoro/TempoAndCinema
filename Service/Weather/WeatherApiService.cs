@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using TempoAndCinema.Dtos;
 
-namespace TempoAndCinema.Services.Weather
+namespace TempoAndCinema.Service.Weather
 {
     public class WeatherApiService : IWeatherApiService
     {
@@ -17,10 +17,10 @@ namespace TempoAndCinema.Services.Weather
 
         public async Task<WeatherDto?> GetWeatherAsync(double latitude, double longitude)
         {
-         string url =
-    $"v1/forecast?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
-    $"&longitude={longitude.ToString(CultureInfo.InvariantCulture)}" +
-    "&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
+            string url =
+       $"v1/forecast?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
+       $"&longitude={longitude.ToString(CultureInfo.InvariantCulture)}" +
+       "&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
 
 
             HttpResponseMessage response = await _httpClient.GetAsync(url);

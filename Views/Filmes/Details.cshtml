@@ -1,10 +1,13 @@
 ﻿@model TempoAndCinema.Models.Filme
 @using System.Text.Json
+@using TempoAndCinema.Dtos
+@using System.Globalization;
 
 @{
     ViewData["Title"] = "Detalhes";
 
     var elenco = ViewBag.ElencoCompleto as List<string> ?? new List<string>();
+    var clima = ViewBag.Weather as WeatherDto;
     var imagens = ViewBag.Imagens as List<string> ?? new List<string>();
 }
 
@@ -33,6 +36,7 @@
     </div>
 
     <div class="row">
+
         <!-- POSTER -->
         <div class="col-md-3">
             <img src="@Model.PosterPath" class="img-fluid rounded shadow" alt="@Model.Titulo" />
@@ -42,7 +46,25 @@
                 <li class="list-group-item"><strong>Duração:</strong> @Model.Duracao min</li>
                 <li class="list-group-item"><strong>Lançamento:</strong> @Model.DataLancamento?.ToString("dd/MM/yyyy")</li>
                 <li class="list-group-item"><strong>Nota Média:</strong> @Model.NotaMedia</li>
+                <li class="list-group-item"><strong>Latitude:</strong> @Model.Latitude?.ToString(CultureInfo.InvariantCulture)</li>
+                <li class="list-group-item"><strong>Longitude:</strong> @Model.Longitude?.ToString(CultureInfo.InvariantCulture)</li>
             </ul>
+
+            <!-- ☀️ PREVISÃO DO TEMPO -->
+            @if (clima != null && clima.Daily != null)
+            {
+                <h3 class="mt-5">☀ Previsão do Tempo</h3>
+
+                <div class="card shadow-sm p-3 mt-3">
+
+                    <h5>@clima.Daily.Time[0]</h5>
+                    <p>Cidade Associada: @Model.CidadeReferencia </p>
+                            
+                    <p>🌡 Máx: @clima.Daily.Temperature_2m_Max[0] °C</p>
+                    <p>❄ Min: @clima.Daily.Temperature_2m_Min[0] °C</p>
+                </div>
+            }
+
         </div>
 
         <!-- INFORMAÇÕES -->
