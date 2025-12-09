@@ -319,5 +319,38 @@ namespace TempoAndCinema.Controllers
             }
         }
 
-    }
+		[HttpGet]
+		public async Task<IActionResult> ExportCsv(int id)
+		{
+			var filme = await _repo.GetByIdAsync(id);
+			if (filme == null)
+				return NotFound();
+
+			// monta CSV básico
+			var linhas = new List<string>();
+
+			linhas.Add("Campo,Valor");
+
+			linhas.Add($"Título,{filme.Titulo}");
+			linhas.Add($"Título Original,{filme.TituloOriginal}");
+			linhas.Add($"Gênero,{filme.Genero}");
+			linhas.Add($"Sinopse,\"{filme.Sinopse}\"");
+			linhas.Add($"Data de Lançamento,{filme.DataLancamento?.ToString("yyyy-MM-dd")}");
+			linhas.Add($"Idioma,{filme.Lingua}");
+			linhas.Add($"Duração,{filme.Duracao}");
+			linhas.Add($"Nota Média,{filme.NotaMedia}");
+			linhas.Add($"Poster,{filme.PosterPath}");
+			linhas.Add($"Cidade Referência,{filme.CidadeReferencia}");
+			linhas.Add($"Latitude,{filme.Latitude}");
+			linhas.Add($"Longitude,{filme.Longitude}");
+
+			// Converte CSV para bytes
+			var csv = string.Join("\n", linhas);
+			var bytes = System.Text.Encoding.UTF8.GetBytes(csv);
+
+			// Baixar arquivo
+			return File(bytes, "text/csv", $"filme_{filme.Id}.csv");
+		}
+
+	}
 }
