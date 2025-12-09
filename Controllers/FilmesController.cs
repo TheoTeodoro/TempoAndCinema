@@ -176,8 +176,9 @@ namespace TempoAndCinema.Controllers
         {
             if (!ModelState.IsValid)
                 return View(filme);
-
-            // Carrega o registro atual do banco
+            
+            
+            // Carrega o registro atual
             var atual = await _repo.GetByIdAsync(filme.Id);
             if (atual == null) return NotFound();
 
@@ -191,48 +192,76 @@ namespace TempoAndCinema.Controllers
             atual.PosterPath = filme.PosterPath;
             atual.Lingua = filme.Lingua;
             atual.Duracao = filme.Duracao;
+            atual.TrailerUrl = filme.TrailerUrl;
 
-            // ----------- Elenco (CSV → JSON) -----------
+            // ----------- Elenco (CSV → JSON seguro) -----------
             if (!string.IsNullOrWhiteSpace(filme.ElencoPrincipal))
             {
                 var lista = filme.ElencoPrincipal
-                    .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
                     .ToList();
 
                 atual.ElencoPrincipal = JsonSerializer.Serialize(lista);
             }
+            
+            // ----------- Trailer URL (corrige automaticamente o link do YouTube) -----------
+            if (!string.IsNullOrWhiteSpace(filme.TrailerUrl))
+            {
+                string url = filme.TrailerUrl.Trim();
+
+                // Converte YouTube watch → embed
+                if (url.Contains("watch?v="))
+                {
+                    url = url.Replace("watch?v=", "embed/")
+                        .Split('&')[0];
+                }
+
+                // Atribui corretamente ao objeto salvo no banco!
+                atual.TrailerUrl = url;
+            }
+
 
             // ----------- Latitude / Longitude: conversão segura -----------
-            var latStr = Request.Form["Latitude"].FirstOrDefault();
-            var lonStr = Request.Form["Longitude"].FirstOrDefault();
+
+            string? latStr = Request.Form["Latitude"].FirstOrDefault();
+            string? lonStr = Request.Form["Longitude"].FirstOrDefault();
 
             if (!string.IsNullOrWhiteSpace(latStr))
             {
-                if (double.TryParse(latStr, System.Globalization.NumberStyles.Any,
-                        System.Globalization.CultureInfo.InvariantCulture, out var lat))
+                if (double.TryParse(latStr.Replace(",", "."), System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var lat))
+                {
                     atual.Latitude = lat;
-                else if (double.TryParse(latStr, out var latFallback))
-                    atual.Latitude = latFallback;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(lonStr))
             {
-                if (double.TryParse(lonStr, System.Globalization.NumberStyles.Any,
-                        System.Globalization.CultureInfo.InvariantCulture, out var lon))
+                if (double.TryParse(lonStr.Replace(",", "."), System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out var lon))
+                {
                     atual.Longitude = lon;
-                else if (double.TryParse(lonStr, out var lonFallback))
-                    atual.Longitude = lonFallback;
+                }
             }
 
-            // ----------- NotaMedia (não zerar) -----------
-            var notaStr = Request.Form["NotaMedia"].FirstOrDefault();
+            // ----------- NotaMedia (não zera se vier vazia) -----------
+
+            string? notaStr = Request.Form["NotaMedia"].FirstOrDefault();
+
             if (!string.IsNullOrWhiteSpace(notaStr))
             {
                 if (double.TryParse(notaStr.Replace(",", "."), System.Globalization.NumberStyles.Any,
-                        System.Globalization.CultureInfo.InvariantCulture, out var notaParsed))
+                    System.Globalization.CultureInfo.InvariantCulture, out var notaParsed))
+                {
                     atual.NotaMedia = notaParsed;
+                }
             }
+            
+           
+
 
             // ----------- Auditoria -----------
             atual.DataAtualizacao = DateTime.Now;
@@ -241,7 +270,6 @@ namespace TempoAndCinema.Controllers
 
             return RedirectToAction(nameof(Index), new { message = "Filme editado com sucesso!" });
         }
-
 
         // GET: /Filmes/Delete/5
         public async Task<IActionResult> Delete(int id)

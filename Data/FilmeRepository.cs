@@ -86,9 +86,7 @@ namespace TempoAndCinema.Data
                 DataCriacao = filme.DataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
                 DataAtualizacao = filme.DataAtualizacao.ToString("yyyy-MM-dd HH:mm:ss")
             };
-
-
-            // execute scalar returns long sometimes — be permissivo
+            
             var scalar = await conn.ExecuteScalarAsync<long>(sql, parameters);
             return (int)scalar;
         }
@@ -99,23 +97,24 @@ namespace TempoAndCinema.Data
             await conn.OpenAsync();
 
             string sql = @"
-                UPDATE Filmes SET
-                    Titulo = @Titulo,
-                    TituloOriginal = @TituloOriginal,
-                    Sinopse = @Sinopse,
-                    DataLancamento = @DataLancamento,
-                    Genero = @Genero,
-                    PosterPath = @PosterPath,
-                    Lingua = @Lingua,
-                    Duracao = @Duracao,
-                    NotaMedia = @NotaMedia,
-                    ElencoPrincipal = @ElencoPrincipal,
-                    CidadeReferencia = @CidadeReferencia,
-                    Latitude = @Latitude,
-                    Longitude = @Longitude,
-                    DataAtualizacao = @DataAtualizacao
-                WHERE Id = @Id
-            ";
+        UPDATE Filmes SET
+            Titulo = @Titulo,
+            TituloOriginal = @TituloOriginal,
+            Sinopse = @Sinopse,
+            DataLancamento = @DataLancamento,
+            Genero = @Genero,
+            PosterPath = @PosterPath,
+            Lingua = @Lingua,
+            Duracao = @Duracao,
+            NotaMedia = @NotaMedia,
+            ElencoPrincipal = @ElencoPrincipal,
+            CidadeReferencia = @CidadeReferencia,
+            Latitude = @Latitude,
+            Longitude = @Longitude,
+            TrailerUrl = @TrailerUrl,
+            DataAtualizacao = @DataAtualizacao
+        WHERE Id = @Id
+    ";
 
             var parameters = new
             {
@@ -133,6 +132,7 @@ namespace TempoAndCinema.Data
                 filme.CidadeReferencia,
                 filme.Latitude,
                 filme.Longitude,
+                filme.TrailerUrl,
                 DataAtualizacao = filme.DataAtualizacao.ToString("yyyy-MM-dd HH:mm:ss")
             };
 

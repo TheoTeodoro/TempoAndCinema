@@ -149,9 +149,33 @@ namespace TempoAndCinema.Controllers
                 Latitude = lat,
                 Longitude = lng,
 
+                // 🔥 SALVANDO ELENCO
+                ElencoPrincipal = JsonSerializer.Serialize(
+                    credits?.Cast?.Select(c => c.Name).Take(10).ToList()
+                ),
+
+                // 🔥 SALVANDO BACKDROPS
+                BackdropsJson = JsonSerializer.Serialize(
+                    images?.Backdrops?.Select(b =>
+                        $"{config.Images.Secure_Base_Url}{config.Images.Backdrop_Sizes.Last()}{b.File_Path}"
+                    )
+                ),
+
+                // 🔥 SALVANDO POSTERS (usado depois)
+                ImagesJson = JsonSerializer.Serialize(
+                    images?.Posters?.Select(p =>
+                        $"{config.Images.Secure_Base_Url}{config.Images.Poster_Sizes.Last()}{p.File_Path}"
+                    )
+                ),
+
+                // 🔥 SALVANDO TUDO (opcional)
+                CreditsJson = JsonSerializer.Serialize(credits),
+                VideosJson = JsonSerializer.Serialize(videos),
+
                 DataCriacao = DateTime.Now,
                 DataAtualizacao = DateTime.Now
             };
+
 
             int id = await _repo.AddAsync(filme);
             return RedirectToAction("Details", "Filmes", new { id });

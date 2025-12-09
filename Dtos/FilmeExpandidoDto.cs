@@ -16,8 +16,8 @@
         public int? Duracao { get; set; }
         public double NotaMedia { get; set; }
 
-        public string TrailerUrl { get; set; }               // NOVO
-        public List<string> Backdrops { get; set; } = new(); // NOVO
-        public List<string> Elenco { get; set; } = new();     // NOVO
+        public string TrailerUrl { get; set; }              
+        public List<string> Backdrops { get; set; } = new(); 
+        public List<string> Elenco { get; set; } = new();     
     }
 }
