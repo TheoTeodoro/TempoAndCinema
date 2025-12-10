@@ -1,0 +1,27 @@
+﻿@model TempoAndCinema.Dtos.FilmeExpandidoDto
+
+<div class="movie-card text-center">
+    <img class="movie-poster img-fluid rounded shadow-sm"
+         src="@($"https://image.tmdb.org/t/p/w300{Model.PosterPath}")"
+         alt="@Model.Titulo" />
+
+    <div class="mt-2">
+        <strong>@Model.Titulo</strong>
+        <div class="text-warning">
+            ⭐ @Model.NotaMedia
+        </div>
+    </div>
+</div>
+
+<style>
+    .movie-card {
+        width: 160px;
+        display: inline-block;
+        margin: 8px;
+    }
+    .movie-poster {
+        height: 240px;
+        object-fit: cover;
+        width: 100%;
+    }
+</style>

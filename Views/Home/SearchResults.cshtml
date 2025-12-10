@@ -1,0 +1,20 @@
+﻿@model TempoAndCinema.Dtos.TmdbSearchResponseDto
+
+
+<div class="container mt-4">
+    <h2>Resultados para "@Model.Query"</h2>
+
+    <div class="d-flex flex-wrap">
+        @foreach (var filme in Model.Results)
+        {
+            <div class="m-2" style="width:160px;">
+                <img class="img-fluid rounded"
+                     src="https://image.tmdb.org/t/p/w300@filme.Poster_Path"
+                     alt="@filme.Title" />
+                <div class="text-center mt-1">
+                    @filme.Title
+                </div>
+            </div>
+        }
+    </div>
+</div>

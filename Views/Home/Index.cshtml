@@ -1,8 +1,24 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model TempoAndCinema.ViewModels.HomePageViewModel
+
+@{
+    ViewData["Title"] = "Home — Tempo & Cinema";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+
+    <h2>🔥 Tendências da Semana</h2>
+    <partial name="~/Views/Home/Partials/_Carousel.cshtml" model="Model.Trending" />
+
+    <h2 class="mt-4">🎬 Em Cartaz</h2>
+    <partial name="~/Views/Home/Partials/_Carousel.cshtml" model="Model.Lancamentos" />
+
+    <h2 class="mt-4">📚 Catálogo A–Z</h2>
+    @if (Model.Catalogo.Any())
+    {
+        <partial name="~/Views/Home/Partials/_CatalogoAZ.cshtml" model="Model.Catalogo" />
+    }
+    else
+    {
+        <p class="text-muted">Nenhum filme importado ainda.</p>
+    }
 </div>
