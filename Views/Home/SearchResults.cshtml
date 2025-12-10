@@ -1,20 +1,19 @@
 ﻿@model TempoAndCinema.Dtos.TmdbSearchResponseDto
 
-
 <div class="container mt-4">
-    <h2>Resultados para "@Model.Query"</h2>
+    <button class="btn btn-secondary mb-3" onclick="history.back()">← Voltar</button>
+
+    <h2 class="section-title">Resultados para "@Model.Query"</h2>
 
     <div class="d-flex flex-wrap">
         @foreach (var filme in Model.Results)
         {
-            <div class="m-2" style="width:160px;">
-                <img class="img-fluid rounded"
-                     src="https://image.tmdb.org/t/p/w300@filme.Poster_Path"
-                     alt="@filme.Title" />
-                <div class="text-center mt-1">
-                    @filme.Title
-                </div>
-            </div>
+            <partial name="Partials/_MovieCard" model="filme" />
         }
     </div>
 </div>
+
+<style>
+.section-title { color: #fff; font-weight: bold; margin-bottom: 10px; }
+body { background-color: #111; color: #f5f5f5; }
+</style>
