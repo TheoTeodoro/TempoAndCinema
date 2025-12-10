@@ -18,7 +18,7 @@ namespace TempoAndCinema.Service.Weather
         public async Task<WeatherDto?> GetWeatherAsync(double latitude, double longitude)
         {
             string url =
-       $"v1/forecast?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
+       $"/v1/forecast?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
        $"&longitude={longitude.ToString(CultureInfo.InvariantCulture)}" +
        "&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
 
