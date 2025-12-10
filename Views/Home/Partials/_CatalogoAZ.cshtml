@@ -1,0 +1,40 @@
+﻿@using TempoAndCinema.Models
+@model List<Filme>
+
+@{
+    var grupos = Model
+        .GroupBy(f =>
+        {
+            var titulo = (f.Titulo ?? "?").Trim();
+            if (string.IsNullOrEmpty(titulo))
+                titulo = "?";
+
+            return char.ToUpper(titulo.First());
+        })
+        .OrderBy(g => g.Key);
+}
+
+@foreach (var grupo in grupos)
+{
+    <h3 class="mt-4">@grupo.Key</h3>
+
+    <div class="d-flex flex-wrap">
+        @foreach (var filme in grupo)
+        {
+            var poster = string.IsNullOrEmpty(filme.PosterPath)
+                ? "/img/no-poster.png"
+                : filme.PosterPath;
+            
+            <div class="m-2 p-2 border rounded" style="width: 180px;">
+                <img src="@poster"
+                     class="img-fluid rounded mb-2"
+                     alt="@filme.Titulo" />
+
+                <div class="text-center">
+                    <strong>@filme.Titulo</strong>
+                    <div class="small text-muted">@filme.Genero</div>
+                </div>
+            </div>
+        }
+    </div>
+}

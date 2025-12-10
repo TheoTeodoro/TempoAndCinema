@@ -12,5 +12,7 @@ namespace TempoAndCinema.Services.Tmdb
         Task<TmdbMovieDetailsDto?> GetMovieDetailsAsync(int movieId);
         Task<TmdbImageResponseDto?> GetMovieImagesAsync(int movieId);
         Task<TmdbConfigurationDto?> GetConfigurationAsync();
+        Task<IEnumerable<FilmeExpandidoDto>> GetTrendingMoviesAsync();
+        Task<IEnumerable<FilmeExpandidoDto>> GetNowPlayingMoviesAsync();
     }
 }

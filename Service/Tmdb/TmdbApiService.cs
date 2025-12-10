@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using TempoAndCinema.Models;
 using TempoAndCinema.Dtos;
+using TempoAndCinema.Service;
 
 namespace TempoAndCinema.Services.Tmdb
 {
@@ -160,6 +161,86 @@ namespace TempoAndCinema.Services.Tmdb
 
             return result;
         }
+        
+        // === Trending ===
+        public async Task<IEnumerable<FilmeExpandidoDto>> GetTrendingMoviesAsync()
+        {
+            string cacheKey = "tmdb_trending";
+
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<FilmeExpandidoDto> cached))
+                return cached;
+
+            string url = $"{BaseUrl}/trending/movie/week?api_key={_apiKey}&language=pt-BR";
+
+            var response = await _http.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+
+            var result = JsonSerializer.Deserialize<TmdbTrendingResponseDto>(json, _jsonOptions);
+
+            if (result?.Results == null)
+                return Enumerable.Empty<FilmeExpandidoDto>();
+
+            var filmes = result.Results.Select(m => new FilmeExpandidoDto
+            {
+                TmdbId = m.Id,
+                Titulo = m.Title ?? "",
+                NotaMedia = m.Vote_Average,
+                PosterPath = m.Poster_Path
+            }).ToList();
+
+            _cache.Set(cacheKey, filmes, TimeSpan.FromMinutes(10));
+
+            return filmes;
+        }
+
+        
+        // === Now Playing ===
+        public async Task<IEnumerable<FilmeExpandidoDto>> GetNowPlayingMoviesAsync()
+        {
+            string cacheKey = "tmdb_nowplaying";
+
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<FilmeExpandidoDto> cached))
+                return cached;
+
+            string url = $"{BaseUrl}/movie/now_playing?api_key={_apiKey}&language=pt-BR&page=1";
+
+            var response = await _http.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+
+            var result = JsonSerializer.Deserialize<TmdbNowPlayingResponseDto>(json, _jsonOptions);
+
+            if (result?.Results == null)
+                return Enumerable.Empty<FilmeExpandidoDto>();
+
+            var filmes = result.Results.Select(m => new FilmeExpandidoDto
+            {
+                TmdbId = m.Id,
+                Titulo = m.Title ?? "",
+                NotaMedia = m.Vote_Average,
+                PosterPath = m.Poster_Path
+            }).ToList();
+
+            _cache.Set(cacheKey, filmes, TimeSpan.FromMinutes(10));
+
+            return filmes;
+        }
 
     }
+    
+    // === DTO usado somente pelo Trending e NowPlaying ===
+    public class TmdbTrendingResponseDto
+    {
+        public List<TmdbTrendingMovieDto>? Results { get; set; }
+    }
+
+    public class TmdbTrendingMovieDto
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public string? Poster_Path { get; set; }
+        public double Vote_Average { get; set; }
+    }
+
 }

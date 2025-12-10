@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IFilmeRepository, FilmeRepository>();
 builder.Services.AddHttpClient<ITmdbApiService, TmdbApiService>();
 builder.Services.AddScoped<ITmdbConfigurationUrlHelper, TmdbConfigurationUrlHelper>();

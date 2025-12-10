@@ -1,0 +1,19 @@
+﻿@model IEnumerable<TempoAndCinema.Dtos.FilmeExpandidoDto>
+
+
+<div class="carousel-container mb-4">
+    <div class="carousel-scroll">
+        @foreach (var filme in Model)
+        {
+        <partial name="~/Views/Home/Partials/_MovieCard.cshtml" model="filme" />
+        }
+    </div>
+</div>
+
+<style>
+    .carousel-scroll {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 10px 0;
+    }
+</style>
