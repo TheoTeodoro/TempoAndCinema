@@ -1,0 +1,108 @@
+﻿@model TempoAndCinema.Models.Filme
+
+@{
+    ViewData["Title"] = "Excluir Filme";
+}
+
+<style>
+    body {
+        background-color: #141414;
+        color: #fff;
+        font-family: "Netflix Sans", Arial, sans-serif;
+    }
+
+    .delete-title {
+        color: #e50914;
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    .delete-card {
+        background: #1b1b1b;
+        border: 1px solid #2a2a2a;
+        padding: 20px;
+        border-radius: 6px;
+    }
+
+    .list-group-item {
+        background: #1b1b1b !important;
+        border: 1px solid #333;
+        color: #ddd;
+    }
+
+    .btn-netflix-danger {
+        background: #e50914;
+        border: none;
+        padding: 12px 20px;
+        font-weight: bold;
+        border-radius: 4px;
+        color: white;
+    }
+
+    .btn-netflix-danger:hover {
+        background: #b00610;
+    }
+
+    .btn-secondary-custom {
+        background: #333;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 4px;
+    }
+
+    .btn-secondary-custom:hover {
+        background: #444;
+        color: white;
+    }
+</style>
+
+<div class="container mt-5">
+
+    <h2 class="delete-title">Excluir Filme</h2>
+    <p class="text-muted">Tem certeza que deseja excluir este filme? Esta ação é permanente.</p>
+
+    <div class="delete-card shadow-lg mt-4">
+        <h3 class="fw-bold">@Model.Titulo</h3>
+        <h5 class="text-muted">@Model.TituloOriginal</h5>
+
+        <div class="row mt-4">
+            <!-- POSTER -->
+            <div class="col-md-3">
+                <img src="@Model.PosterPath"
+                     class="img-fluid rounded shadow"
+                     alt="@Model.Titulo" />
+            </div>
+
+            <!-- INFO -->
+            <div class="col-md-9">
+                <ul class="list-group shadow-sm">
+                    <li class="list-group-item"><strong>🎬 Gênero:</strong> @Model.Genero</li>
+                    <li class="list-group-item"><strong>🌐 Idioma:</strong> @Model.Lingua.ToUpper()</li>
+                    <li class="list-group-item"><strong>⭐ Nota Média:</strong> @Model.NotaMedia</li>
+                    <li class="list-group-item"><strong>📅 Lançamento:</strong> @Model.DataLancamento?.ToString("dd/MM/yyyy")</li>
+                    <li class="list-group-item"><strong>⏳ Duração:</strong> @Model.Duracao min</li>
+                    <li class="list-group-item"><strong>📍 Cidade Referência:</strong> @(Model.CidadeReferencia ?? "—")</li>
+                    <li class="list-group-item"><strong>📍 Latitude:</strong> @(Model.Latitude?.ToString() ?? "—")</li>
+                    <li class="list-group-item"><strong>📍 Longitude:</strong> @(Model.Longitude?.ToString() ?? "—")</li>
+                    <li class="list-group-item"><strong>📌 Criado em:</strong> @Model.DataCriacao</li>
+                    <li class="list-group-item"><strong>🔄 Última Atualização:</strong> @Model.DataAtualizacao</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- BOTÕES -->
+        <form asp-action="Delete" method="post" class="mt-4">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn-netflix-danger me-2">
+                🗑 Confirmar Exclusão
+            </button>
+
+            <a class="btn-secondary-custom" href="/Filmes/Details/@Model.Id">
+                Cancelar
+            </a>
+        </form>
+
+    </div>
+</div>

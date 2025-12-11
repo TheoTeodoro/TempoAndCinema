@@ -1,0 +1,116 @@
+﻿@model List<TempoAndCinema.Models.Filme>
+
+@{
+    ViewData["Title"] = "Catálogo Local";
+}
+
+<!-- ESTILIZAÇÃO GLOBAL DO INDEX -->
+<style>
+    .movie-card {
+        border-radius: 16px !important;
+        overflow: hidden;
+        transition: transform .25s ease, box-shadow .25s ease;
+        cursor: pointer;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 25px rgba(0,0,0,.18);
+    }
+
+    .movie-img {
+        height: 360px;
+        object-fit: cover;
+        border-bottom: 3px solid #eee;
+    }
+
+    .card-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, #6f42c1, #51339e);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .btn-add:hover {
+        filter: brightness(1.15);
+        transform: translateY(-2px);
+    }
+
+    .btn-view {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .btn-view:hover {
+        background-color: #6f42c1 !important;
+        color: white !important;
+        transform: translateY(-2px);
+    }
+
+    .header-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #333;
+    }
+
+</style>
+
+
+<div class="container mt-4">
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success text-center">@ViewBag.Message</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="header-title">🎬 Catálogo Local</h2>
+
+        <a asp-action="Create" class="btn btn-add text-white">
+            + Adicionar Filme
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Nenhum filme cadastrado ainda.</div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var f in Model)
+            {
+                <div class="col-md-4 col-lg-3">
+
+                    <div class="card shadow-sm border-0 movie-card h-100">
+
+                        <img class="movie-img"
+                             src="@f.PosterPath"
+                             alt="@f.Titulo" />
+
+                        <div class="card-body">
+                            <h5 class="card-title">@f.Titulo</h5>
+                            <p class="text-muted small">@f.TituloOriginal</p>
+
+                            <a asp-action="Details" asp-route-id="@f.Id"
+                               class="btn btn-outline-primary btn-view w-100">
+                                Ver Detalhes
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+</div>

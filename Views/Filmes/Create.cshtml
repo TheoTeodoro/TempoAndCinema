@@ -1,0 +1,139 @@
+﻿@model TempoAndCinema.Models.Filme
+@{
+    ViewData["Title"] = "Cadastrar Filme";
+}
+
+<!-- CUSTOM STYLE (inline para facilitar) -->
+<style>
+    .card {
+        border-radius: 16px !important;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 10px 14px;
+        border: 1px solid #d4d4d4;
+        transition: all .25s ease;
+    }
+
+    .form-control:focus {
+        border-color: #6f42c1;
+        box-shadow: 0 0 0 .2rem rgba(111, 66, 193, .25);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #28a745, #1e7e34);
+        border: none;
+        padding: 12px;
+        font-size: 1.15rem;
+        border-radius: 12px;
+        transition: all .2s;
+    }
+
+    .btn-success:hover {
+        filter: brightness(1.15);
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        border-radius: 12px;
+        padding: 8px 18px;
+    }
+
+    .section-header {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #444;
+    }
+</style>
+
+
+<div class="container mt-4">
+
+    <a asp-action="Index" class="btn btn-secondary mb-3">← Voltar</a>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="fw-bold mb-3 section-header">Cadastrar Filme</h3>
+
+            <!-- EXIBE ERROS -->
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Título</label>
+                        <input asp-for="Titulo" class="form-control" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Título Original</label>
+                        <input asp-for="TituloOriginal" class="form-control" />
+                        <span asp-validation-for="TituloOriginal" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Sinopse</label>
+                        <textarea asp-for="Sinopse" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Sinopse" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Data de Lançamento</label>
+                        <input asp-for="DataLancamento" type="date" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Gênero</label>
+                        <input asp-for="Genero" class="form-control" />
+                        <span asp-validation-for="Genero" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Duração (min)</label>
+                        <input asp-for="Duracao" class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Poster URL</label>
+                        <input asp-for="PosterPath" class="form-control" />
+                        <span asp-validation-for="PosterPath" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Idioma</label>
+                        <input asp-for="Lingua" class="form-control" />
+                        <span asp-validation-for="Lingua" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Latitude</label>
+                        <input asp-for="Latitude" class="form-control" />
+                        <span asp-validation-for="Latitude" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Longitude</label>
+                        <input asp-for="Longitude" class="form-control" />
+                        <span asp-validation-for="Longitude" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-success w-100">Salvar</button>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

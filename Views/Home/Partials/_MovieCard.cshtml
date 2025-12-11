@@ -1,0 +1,57 @@
+﻿@model TempoAndCinema.Dtos.FilmeExpandidoDto
+
+<a href="@Url.Action("Details", "Tmdb", new { id = Model.TmdbId })" style="text-decoration: none; color: inherit;">
+    <div class="movie-card text-center">
+        <img class="movie-poster img-fluid rounded shadow-sm"
+             src="@($"https://image.tmdb.org/t/p/w300{Model.PosterPath}")"
+             alt="@Model.Titulo" />
+
+        <div class="mt-2 movie-title">
+            <strong>@Model.Titulo</strong>
+            <div class="text-warning small fw-bold">
+                ⭐ @Model.NotaMedia
+            </div>
+        </div>
+    </div>
+</a>
+
+<style>
+.movie-card {
+    width: 200px;
+    flex: 0 0 auto;
+    margin: 12px;
+    vertical-align: top;
+    background-color: #1c1c1c;
+    border-radius: 5px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.7);
+}
+
+.movie-poster {
+    height: 300px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.movie-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;  /* máximo 2 linhas */
+    -webkit-box-orient: vertical;
+}
+
+.movie-card a.btn {
+    font-size: 0.8rem;
+    padding: 2px 5px;
+}
+</style>
