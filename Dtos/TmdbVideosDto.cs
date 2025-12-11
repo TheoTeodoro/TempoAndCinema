@@ -10,12 +10,8 @@ namespace TempoAndCinema.Dtos
 
     public class VideoDto
     {
-<<<<<<< HEAD
         [JsonPropertyName("name")] 
         public string Name { get; set; }
-
-=======
->>>>>>> origin/LucayanBranch
         [JsonPropertyName("key")]
         public string Key { get; set; }
 

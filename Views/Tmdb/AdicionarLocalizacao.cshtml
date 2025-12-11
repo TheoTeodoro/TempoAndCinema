@@ -2,7 +2,6 @@
     ViewData["Title"] = "Adicionar Localização";
 }
 
-<<<<<<< HEAD
 <div class="location-container">
     <h2 class="page-title">Localização para: <span>@ViewBag.Titulo</span></h2>
 
@@ -108,39 +107,3 @@
         background: #f6121d;
     }
 </style>
-=======
-<h2>Localização para: @ViewBag.Titulo</h2>
-
-<form asp-action="SalvarComLocalizacao" method="post">
-    <input type="hidden" name="tmdbId" value="@ViewBag.TmdbId" />
-
-    <div class="mb-3">
-        <label>Cidade:</label>
-        <input name="cidade" class="form-control" required />
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Latitude</label>
-        <input name="latitude"
-               type="text"
-               class="form-control"
-               value="@Model?.Latitude?.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture)"
-               placeholder="Ex: -21.5483"
-               pattern="\-?\d+(\.\d+)?"
-               required />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Longitude</label>
-        <input name="longitude"
-               type="text"
-               class="form-control"
-               value="@Model?.Longitude?.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture)"
-               placeholder="Ex: -48.1234"
-               pattern="\-?\d+(\.\d+)?"
-               required />
-    </div>
-
-
-    <button class="btn btn-primary">Salvar Filme</button>
-</form>
->>>>>>> origin/LucayanBranch
