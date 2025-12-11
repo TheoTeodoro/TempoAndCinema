@@ -3,7 +3,10 @@ using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 using TempoAndCinema.Models;
 using TempoAndCinema.Dtos;
+<<<<<<< HEAD
 using TempoAndCinema.Service;
+=======
+>>>>>>> origin/LucayanBranch
 
 namespace TempoAndCinema.Services.Tmdb
 {
@@ -161,6 +164,7 @@ namespace TempoAndCinema.Services.Tmdb
 
             return result;
         }
+<<<<<<< HEAD
         
         public async Task<TmdbReviewResponseDto?> GetMovieReviewsAsync(int movieId)
         {
@@ -270,4 +274,8 @@ namespace TempoAndCinema.Services.Tmdb
         public double Vote_Average { get; set; }
     }
 
+=======
+
+    }
+>>>>>>> origin/LucayanBranch
 }

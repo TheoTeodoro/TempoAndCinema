@@ -12,9 +12,12 @@ namespace TempoAndCinema.Services.Tmdb
         Task<TmdbMovieDetailsDto?> GetMovieDetailsAsync(int movieId);
         Task<TmdbImageResponseDto?> GetMovieImagesAsync(int movieId);
         Task<TmdbConfigurationDto?> GetConfigurationAsync();
+<<<<<<< HEAD
         Task<IEnumerable<FilmeExpandidoDto>> GetTrendingMoviesAsync();
         Task<IEnumerable<FilmeExpandidoDto>> GetNowPlayingMoviesAsync();
         Task<TmdbSimilarMoviesDto?> GetSimilarMoviesAsync(int movieId);
         Task<TmdbReviewResponseDto?> GetMovieReviewsAsync(int movieId);
+=======
+>>>>>>> origin/LucayanBranch
     }
 }

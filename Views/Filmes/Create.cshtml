@@ -1,5 +1,6 @@
 ﻿@model TempoAndCinema.Models.Filme
 @{
+<<<<<<< HEAD
     ViewData["Title"] = "Cadastrar Filme";
 }
 
@@ -136,4 +137,94 @@
 
         </div>
     </div>
+=======
+	ViewData["Title"] = "Cadastrar Filme";
+}
+
+<div class="container mt-4">
+	<a asp-action="Index" class="btn btn-secondary mb-3">← Voltar</a>
+
+	<div class="card shadow-sm border-0">
+		<div class="card-body">
+			<h3 class="fw-bold mb-3">Cadastrar Filme</h3>
+
+			<!-- EXIBE ERROS -->
+			<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+			<form asp-action="Create" method="post">
+				@Html.AntiForgeryToken()
+
+				<div class="row g-3">
+
+					<div class="col-md-6">
+						<label class="form-label">Título</label>
+						<input asp-for="Titulo" class="form-control" />
+						<span asp-validation-for="Titulo" class="text-danger"></span>
+					</div>
+
+					<div class="col-md-6">
+						<label class="form-label">Título Original</label>
+						<input asp-for="TituloOriginal" class="form-control" />
+						<span asp-validation-for="TituloOriginal" class="text-danger"></span>
+					</div>
+
+					<div class="col-12">
+						<label class="form-label">Sinopse</label>
+						<textarea asp-for="Sinopse" class="form-control" rows="4"></textarea>
+						<span asp-validation-for="Sinopse" class="text-danger"></span>
+					</div>
+
+					<div class="col-md-4">
+						<label class="form-label">Data de Lançamento</label>
+						<input asp-for="DataLancamento" type="date" class="form-control" />
+					</div>
+
+					<div class="col-md-4">
+						<label class="form-label">Gênero</label>
+						<input asp-for="Genero" class="form-control" />
+						<span asp-validation-for="Genero" class="text-danger"></span>
+					</div>
+
+					<div class="col-md-4">
+						<label class="form-label">Duração (min)</label>
+						<input asp-for="Duracao" class="form-control" />
+					</div>
+
+					<div class="col-md-6">
+						<label class="form-label">Poster URL</label>
+						<input asp-for="PosterPath" class="form-control" />
+						<span asp-validation-for="PosterPath" class="text-danger"></span>
+					</div>
+
+					<div class="col-md-6">
+						<label class="form-label">Idioma</label>
+						<input asp-for="Lingua" class="form-control" />
+						<span asp-validation-for="Lingua" class="text-danger"></span>
+					</div>
+
+					<div class="col-12 mt-3">
+						<button type="submit" class="btn btn-success w-100">Salvar</button>
+					</div>
+
+
+
+					<div class="col-md-6">
+						<label class="form-label">Latitude</label>
+						<input asp-for="Latitude" class="form-control" />
+						<span asp-validation-for="Latitude" class="text-danger"></span>
+					</div>
+
+					<div class="col-md-6">
+						<label class="form-label">Longitude</label>
+						<input asp-for="Longitude" class="form-control" />
+						<span asp-validation-for="Longitude" class="text-danger"></span>
+					</div>
+
+
+				</div>
+			</form>
+
+		</div>
+	</div>
+>>>>>>> origin/LucayanBranch
 </div>

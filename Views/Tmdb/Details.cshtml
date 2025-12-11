@@ -1,22 +1,54 @@
 ﻿@using TempoAndCinema.Dtos
 @model TempoAndCinema.Dtos.TmdbMovieDetailsDto
+<<<<<<< HEAD
 @{
     ViewData["Title"] = Model.Title;
 
-    var images = ViewBag.Images;
+    var images = ViewBag.Images as dynamic;
     var credits = ViewBag.Credits;
+    var creditsDto = ViewBag.Credits as TmdbCreditsDto;
     var videos = ViewBag.Videos;
     var similar = ViewBag.Similar;
     var reviews = ViewBag.Reviews;
 
+    // CASTS ROBUSTOS — Converter dinâmico para List<T>
+    List<ImageDto> imageBackdrops = null;
+    List<ImageDto> imagePosters = null;
+    
+    if (images != null && images.Backdrops != null)
+    {
+        try
+        {
+            imageBackdrops = ((IEnumerable<dynamic>)images.Backdrops)
+                .Select(x => new ImageDto { File_Path = x.File_Path })
+                .ToList();
+        }
+        catch { }
+    }
+    
+    if (images != null && images.Posters != null)
+    {
+        try
+        {
+            imagePosters = ((IEnumerable<dynamic>)images.Posters)
+                .Select(x => new ImageDto { File_Path = x.File_Path })
+                .ToList();
+        }
+        catch { }
+    }
+
+    IEnumerable<CastDto> castList = null;
+    if (creditsDto != null && creditsDto.Cast != null)
+    {
+        castList = creditsDto.Cast;
+    }
+    
+    var similarDto = ViewBag.Similar as TmdbSimilarMoviesDto;
+    var reviewList = reviews as IEnumerable<TmdbReviewDto>;
+
     string baseUrl = ViewBag.BaseUrl;
     string posterSize = ViewBag.PosterSize;
     string backdropSize = ViewBag.BackdropSize;
-
-    // CAST CORRETOS — ESSENCIAL
-    var castList = credits?.Cast as IEnumerable<CastDto>;
-    var similarMovies = similar as IEnumerable<TmdbSimilarMoviesDto>;
-    var reviewList = reviews as IEnumerable<TmdbReviewDto>;
 }
 
 <style>
@@ -77,8 +109,9 @@
     /* CARROSSEL NETFLIX */
     .carousel-container {
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         padding: 10px 0;
+        margin: 0 40px;
     }
 
     .carousel {
@@ -87,6 +120,8 @@
         overflow-x: auto;
         scroll-behavior: smooth;
         padding-bottom: 10px;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .carousel::-webkit-scrollbar {
@@ -95,8 +130,13 @@
 
     .carousel-item {
         min-width: 180px;
+        width: 180px;
+        height: 270px;
         cursor: pointer;
         transition: transform .3s;
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 8px;
     }
 
     .carousel-item:hover {
@@ -105,24 +145,33 @@
 
     .carousel-item img {
         width: 100%;
+        height: 100%;
+        object-fit: cover;
         border-radius: 8px;
+        display: block;
     }
 
     .car-btn {
         position: absolute;
-        top: 40%;
+        top: 50%;
+        transform: translateY(-50%);
         background: rgba(0,0,0,.6);
         color: white;
         border: none;
-        padding: 15px;
-        font-size: 24px;
+        padding: 12px 15px;
+        font-size: 20px;
         cursor: pointer;
         z-index: 10;
-        border-radius: 50%;
+        border-radius: 4px;
+        display: none;
     }
 
-    .car-btn.left { left: 0; }
-    .car-btn.right { right: 0; }
+    .carousel-container:hover .car-btn {
+        display: block;
+    }
+
+    .car-btn.left { left: 10px; }
+    .car-btn.right { right: 10px; }
 
     /* ELENCO */
     .cast-grid {
@@ -223,7 +272,7 @@
 
 
 <!-- ELENCO -->
-@if (credits?.Cast != null)
+@if (castList != null && castList.Count() > 0)
 {
     <h2 class="section-title">Elenco</h2>
     <div class="cast-grid">
@@ -239,7 +288,7 @@
 }
 
 <!-- IMAGENS / BACKDROPS -->
-@if (images?.Backdrops != null)
+@if (imageBackdrops != null && imageBackdrops.Count() > 0)
 {
     <h2 class="section-title">Imagens</h2>
 
@@ -247,8 +296,8 @@
         <button class="car-btn left" onclick="scrollCarousel('imgs', -400)">❮</button>
         <button class="car-btn right" onclick="scrollCarousel('imgs', 400)">❯</button>
 
-        <div id="carousel-imgs" class="carousel">
-            @foreach (var img in images.Backdrops.Take(20))
+        <div id="imgs" class="carousel">
+            @foreach (var img in imageBackdrops.Take(20))
             {
                 <div class="carousel-item">
                     <img src="@($"{baseUrl}{backdropSize}{img.File_Path}")"/>
@@ -259,7 +308,7 @@
 }
 
 <!-- FILMES SIMILARES -->
-@if (images?.Posters != null)
+@if (similarDto?.Results != null && similarDto.Results.Count > 0)
 {
     <h2 class="section-title">Filmes semelhantes</h2>
 
@@ -267,9 +316,27 @@
         <button class="car-btn left" onclick="scrollCarousel('sim', -400)">❮</button>
         <button class="car-btn right" onclick="scrollCarousel('sim', 400)">❯</button>
 
-        <div id="carousel-sim" class="carousel">
-            @* Exemplo (modifique se você tiver endpoint de similares) *@
-            @foreach (var poster in images.Posters.Take(20))
+        <div id="sim" class="carousel">
+            @foreach (var m in similarDto.Results.Take(20))
+            {
+                if (string.IsNullOrEmpty(m.PosterPath)) { continue; }
+                <div class="carousel-item">
+                    <img src="@($"{baseUrl}{posterSize}{m.PosterPath}")" />
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (imagePosters != null && imagePosters.Count() > 0)
+{
+    <h2 class="section-title">Filmes semelhantes</h2>
+
+    <div class="carousel-container">
+        <button class="car-btn left" onclick="scrollCarousel('sim', -400)">❮</button>
+        <button class="car-btn right" onclick="scrollCarousel('sim', 400)">❯</button>
+
+        <div id="sim" class="carousel">
+            @foreach (var poster in imagePosters.Take(20))
             {
                 <div class="carousel-item">
                     <img src="@($"{baseUrl}{posterSize}{poster.File_Path}")" />
@@ -280,7 +347,7 @@
 }
 
 <!-- REVIEWS (TMDb não fornece diretamente a menos que implemente) -->
-@if (credits?.Crew != null)
+@if (reviewList != null)
 {
     <h2 class="section-title">Avaliações e Reviews</h2>
 
@@ -303,3 +370,116 @@
         });
     }
 </script>
+=======
+
+@{
+	ViewData["Title"] = Model.Title;
+	var clima = ViewBag.Weather as WeatherDto;
+
+	var baseUrl = ViewBag.BaseUrl;
+	var posterSize = ViewBag.PosterSize;
+	var backdropSize = ViewBag.BackdropSize;
+
+	var images = ViewBag.Images as TmdbImageResponseDto ?? new TmdbImageResponseDto();
+	var credits = ViewBag.Credits as TmdbCreditsDto ?? new TmdbCreditsDto { Cast = new List<CastDto>() };
+	var videos = ViewBag.Videos as TmdbVideosDto ?? new TmdbVideosDto();
+
+	string trailer = videos?.Results?
+	.FirstOrDefault(v => v.Type == "Trailer" && v.Site == "YouTube")?.Key;
+
+	string elencoTxt = string.Join(", ", credits.Cast.Take(8).Select(c => c.Name));
+}
+
+<div class="container mt-4">
+	<a asp-action="Search" class="btn btn-secondary mb-3">&larr; Voltar</a>
+
+	<div class="card border-0 shadow-sm mb-4">
+		<div class="row g-0">
+
+			<div class="col-md-4">
+				<img class="img-fluid rounded-start"
+					 src="@($"{baseUrl}{posterSize}{Model.Poster_Path}")" />
+			</div>
+
+			<div class="col-md-8 p-4">
+				<h2 class="fw-bold">@Model.Title</h2>
+				<h5 class="text-muted">@Model.Original_Title</h5>
+
+				<p class="mt-3">@Model.Overview</p>
+
+				<p><strong>Duração:</strong> @(Model.Runtime ?? 0) min</p>
+				<p><strong>Lançamento:</strong> @Model.Release_Date</p>
+				<p><strong>Gêneros:</strong> @string.Join(", ", Model.Genres.Select(g => g.Name))</p>
+				<p><strong>Idioma Original:</strong> @Model.Original_Language</p>
+				<p><strong>Nota Média:</strong> ⭐ @Model.Vote_Average</p>
+				<p><strong>Elenco Principal:</strong> @elencoTxt</p>
+				@if (clima != null)
+				{
+					<h3 class="mt-4">⛅ Clima da cidade do filme</h3>
+					<div class="d-flex flex-wrap gap-3">
+						@for (int i = 0; i < clima.Daily.Time.Count; i++)
+						{
+							<div class="border rounded p-2 shadow-sm">
+								<strong>@clima.Daily.Time[i]</strong><br />
+								Máx: @clima.Daily.Temperature_2m_Max[i]°C<br />
+								Min: @clima.Daily.Temperature_2m_Min[i]°C
+							</div>
+						}
+					</div>
+				}
+
+				<form asp-action="ImportToLocal" method="post" class="mt-3">
+					<input type="hidden" name="tmdbId" value="@Model.Id" />
+					<button class="btn btn-success">💾 Salvar no Banco Local</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- TRAILER -->
+	@if (trailer != null)
+	{
+		<h3 class="fw-bold">Trailer</h3>
+		<div class="ratio ratio-16x9 mb-4">
+			<iframe src="https://www.youtube.com/embed/@trailer" allowfullscreen></iframe>
+		</div>
+	}
+
+	<!-- ELENCO -->
+	<h3 class="fw-bold">Elenco</h3>
+	<div class="d-flex overflow-auto gap-3 mb-4">
+		@foreach (var c in credits.Cast.Take(15))
+		{
+			<div class="text-center">
+				@if (!string.IsNullOrWhiteSpace(c.Profile_Path))
+				{
+					<img src="@($"{baseUrl}w185{c.Profile_Path}")"
+						 class="rounded shadow mb-1"
+						 style="width: 120px; height: 170px; object-fit: cover;" />
+				}
+				else
+				{
+					<div class="bg-secondary text-white rounded mb-1 d-flex
+                         align-items-center justify-content-center"
+						 style="width: 120px; height: 170px;">
+						Sem foto
+					</div>
+				}
+				<small><strong>@c.Name</strong><br />@c.Character</small>
+			</div>
+		}
+	</div>
+
+	<!-- IMAGENS -->
+	<h3 class="fw-bold">Imagens</h3>
+	<div class="d-flex overflow-auto gap-3 mb-4">
+		@foreach (var img in images.Backdrops.Take(10))
+		{
+			<img src="@($"{baseUrl}{backdropSize}{img.File_Path}")"
+				 class="rounded shadow"
+				 style="height: 200px; object-fit: cover;" />
+		}
+	</div>
+
+</div>
+>>>>>>> origin/LucayanBranch

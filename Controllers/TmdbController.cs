@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using TempoAndCinema.Dtos;
 using TempoAndCinema.Services.Tmdb;
+<<<<<<< HEAD
+using Microsoft.Extensions.Logging;
+=======
+>>>>>>> origin/LucayanBranch
 using TempoAndCinema.Data;
 using TempoAndCinema.Models;
 using TempoAndCinema.Service.Weather;
@@ -13,15 +17,27 @@ namespace TempoAndCinema.Controllers
     {
         private readonly ITmdbApiService _tmdb;
         private readonly IFilmeRepository _repo;
+<<<<<<< HEAD
+        private readonly IWeatherApiService _weatherService;
+        private readonly ILogger<TmdbController> _logger;
+
+
+        public TmdbController(ITmdbApiService tmdb, IFilmeRepository repo, IWeatherApiService weather, ILogger<TmdbController> logger)
+=======
 
         private readonly IWeatherApiService _weatherService;
 
 
         public TmdbController(ITmdbApiService tmdb, IFilmeRepository repo, IWeatherApiService weather)
+>>>>>>> origin/LucayanBranch
         {
             _tmdb = tmdb;
             _repo = repo;
             _weatherService = weather;
+<<<<<<< HEAD
+            _logger = logger;
+=======
+>>>>>>> origin/LucayanBranch
         }
 
 
@@ -43,15 +59,24 @@ namespace TempoAndCinema.Controllers
 
             return View(response);
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> origin/LucayanBranch
         // RF04 — Detalhes do filme via TMDb
         public async Task<IActionResult> Details(int id)
         {
             var movie = await _tmdb.GetMovieDetailsAsync(id);
             if (movie == null) return NotFound();
+<<<<<<< HEAD
 
             // verifica se já existe no repo para buscar clima
             var existing = await _repo.GetByTmdbIdAsync(id);
+=======
+            var existing = await _repo.GetByTmdbIdAsync(id);
+
+>>>>>>> origin/LucayanBranch
             if (existing != null && existing.Latitude.HasValue && existing.Longitude.HasValue)
             {
                 var clima = await _weatherService.GetWeatherAsync(
@@ -64,6 +89,7 @@ namespace TempoAndCinema.Controllers
             {
                 ViewBag.Weather = null;
             }
+<<<<<<< HEAD
 
             // chamadas TMDb adicionais
             var images = await _tmdb.GetMovieImagesAsync(id);
@@ -74,22 +100,87 @@ namespace TempoAndCinema.Controllers
             var config = await _tmdb.GetConfigurationAsync();
 
             var baseUrl = config?.Images?.Secure_Base_Url ?? "https://image.tmdb.org/t/p/";
+
+            // Choose the best available sizes from TMDb configuration (prefer numeric widths)
+            string ChooseClosestSize(IEnumerable<string>? sizes, int desired)
+            {
+                if (sizes == null) return desired == 780 ? "w780" : "w500";
+
+                var numericSizes = sizes
+                    .Where(s => s != null && s.StartsWith("w") && int.TryParse(s.Substring(1), out _))
+                    .Select(s => int.Parse(s.Substring(1)))
+                    .ToList();
+
+                if (!numericSizes.Any())
+                {
+                    // fallback to a reasonable default
+                    return desired == 780 ? "w780" : "w500";
+                }
+
+                // pick the size with the minimal absolute difference to desired
+                var best = numericSizes.OrderBy(n => Math.Abs(n - desired)).First();
+                return "w" + best;
+            }
+
+            // Prefer sizes near these targets, but pick whatever TMDb provides closest match
+            var posterSize = ChooseClosestSize(config?.Images?.Poster_Sizes, 500);
+            var backdropSize = ChooseClosestSize(config?.Images?.Backdrop_Sizes, 780);
+
+            // enviar para a view via ViewBag
+=======
+            var images = await _tmdb.GetMovieImagesAsync(id);
+            var credits = await _tmdb.GetMovieCreditsAsync(id);
+            var videos = await _tmdb.GetMovieVideosAsync(id);
+            var config = await _tmdb.GetConfigurationAsync();
+
+            var baseUrl = config?.Images?.Secure_Base_Url ?? "https://image.tmdb.org/t/p/";
             var posterSize = config?.Images?.Poster_Sizes?.LastOrDefault() ?? "w500";
             var backdropSize = config?.Images?.Backdrop_Sizes?.LastOrDefault() ?? "w780";
 
-            // enviar para a view via ViewBag
+>>>>>>> origin/LucayanBranch
             ViewBag.BaseUrl = baseUrl;
             ViewBag.PosterSize = posterSize;
             ViewBag.BackdropSize = backdropSize;
             ViewBag.Images = images;
             ViewBag.Credits = credits;
             ViewBag.Videos = videos;
+<<<<<<< HEAD
             ViewBag.Similar = similar;
             ViewBag.Reviews = reviews;
+
+            // Log chosen sizes and example constructed image URLs to help debugging
+            try
+            {
+                var postersCount = images?.Posters?.Count ?? 0;
+                var backdropsCount = images?.Backdrops?.Count ?? 0;
+                var similarCount = similar?.Results?.Count ?? 0;
+
+                var examplePosterPath = images?.Posters?.FirstOrDefault()?.File_Path;
+                var exampleBackdropPath = images?.Backdrops?.FirstOrDefault()?.File_Path;
+                var exampleSimilarPosterPath = similar?.Results?.FirstOrDefault()?.PosterPath;
+
+                var examplePosterUrl = examplePosterPath != null ? $"{baseUrl}{posterSize}{examplePosterPath}" : "n/a";
+                var exampleBackdropUrl = exampleBackdropPath != null ? $"{baseUrl}{backdropSize}{exampleBackdropPath}" : "n/a";
+                var exampleSimilarPosterUrl = exampleSimilarPosterPath != null ? $"{baseUrl}{posterSize}{exampleSimilarPosterPath}" : "n/a";
+
+                _logger.LogInformation("TMDb sizes chosen: Poster={PosterSize}, Backdrop={BackdropSize}. Counts: Posters={PostersCount}, Backdrops={BackdropsCount}, Similar={SimilarCount}. Example URLs: Poster={PosterUrl}, Backdrop={BackdropUrl}, SimilarPoster={SimilarPosterUrl}",
+                    posterSize, backdropSize, postersCount, backdropsCount, similarCount, examplePosterUrl, exampleBackdropUrl, exampleSimilarPosterUrl);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to log TMDb image debug info");
+            }
+=======
+>>>>>>> origin/LucayanBranch
 
             return View(movie);
         }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/LucayanBranch
         [HttpPost]
         public async Task<IActionResult> ImportToLocal(int tmdbId)
         {

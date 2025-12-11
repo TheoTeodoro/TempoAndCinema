@@ -1,16 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using TempoAndCinema.Models;
+<<<<<<< HEAD
 using TempoAndCinema.Services.Tmdb;
 using TempoAndCinema.Data;
 using TempoAndCinema.Dtos;
 using TempoAndCinema.ViewModels;
+=======
+>>>>>>> origin/LucayanBranch
 
 namespace TempoAndCinema.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+<<<<<<< HEAD
         private readonly ITmdbApiService _tmdb;
         private readonly IFilmeRepository _filmeRepository;
 
@@ -39,6 +43,23 @@ namespace TempoAndCinema.Controllers
 
 
         public IActionResult Privacy() => View();
+=======
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+>>>>>>> origin/LucayanBranch
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

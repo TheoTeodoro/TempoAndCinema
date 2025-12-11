@@ -10,6 +10,7 @@
     var imagens = ViewBag.Imagens as List<string> ?? new List<string>();
 }
 
+<<<<<<< HEAD
 <style>
     body {
         background-color: #141414;
@@ -80,21 +81,32 @@
     }
 </style>
 
+=======
+>>>>>>> origin/LucayanBranch
 <div class="container py-4">
 
     <!-- BACKDROP PRINCIPAL -->
     @if (imagens.Any())
     {
         <div class="position-relative mb-4 rounded shadow overflow-hidden">
+<<<<<<< HEAD
             <img src="@imagens.First()" class="img-fluid w-100" style="max-height:440px; object-fit:cover;" />
 
             <div class="position-absolute bottom-0 start-0 bg-dark bg-opacity-50 text-white p-4 rounded-end">
                 <h1 class="fw-bold display-5">@Model.Titulo</h1>
                 <p class="mb-0 fs-5">@Model.Genero • @Model.DataLancamento?.ToString("yyyy")</p>
+=======
+            <img src="@imagens.First()" class="img-fluid w-100" style="max-height:420px; object-fit:cover;" />
+
+            <div class="position-absolute bottom-0 start-0 bg-dark bg-opacity-50 text-white p-3 rounded-end">
+                <h2 class="fw-bold">@Model.Titulo</h2>
+                <p class="m-0">@Model.Genero • @Model.DataLancamento?.ToString("yyyy")</p>
+>>>>>>> origin/LucayanBranch
             </div>
         </div>
     }
 
+<<<<<<< HEAD
     <!-- BOTÕES -->
     <div class="d-flex justify-content-between mb-4">
         <a class="btn-secondary-custom" href="/Filmes">← Voltar</a>
@@ -103,10 +115,20 @@
             <a class="btn-netflix" href="/Filmes/ExportCsv/@Model.Id">📄 Exportar CSV</a>
             <a href="/Filmes/Edit/@Model.Id" class="btn-secondary-custom">✏ Editar</a>
             <a href="/Filmes/Delete/@Model.Id" class="btn-secondary-custom">🗑 Deletar</a>
+=======
+    <!-- BOTÕES DE AÇÃO -->
+    <div class="d-flex justify-content-between mb-4">
+        <a class="btn btn-secondary" href="/Filmes">← Voltar</a>
+
+        <div class="d-flex gap-2">
+            <a href="/Filmes/Edit/@Model.Id" class="btn btn-warning">✏ Editar</a>
+            <a href="/Filmes/Delete/@Model.Id" class="btn btn-danger">🗑 Deletar</a>
+>>>>>>> origin/LucayanBranch
         </div>
     </div>
 
     <div class="row">
+<<<<<<< HEAD
         <!-- POSTER + INFO -->
         <div class="col-md-3">
 
@@ -130,16 +152,51 @@
 
                     <p>🌡 Máx: <strong>@clima.Daily.Temperature_2m_Max[0] °C</strong></p>
                     <p>❄ Min: <strong>@clima.Daily.Temperature_2m_Min[0] °C</strong></p>
+=======
+
+        <!-- POSTER + INFORMAÇÕES -->
+        <div class="col-md-3">
+
+            <!-- Poster -->
+            <img src="@Model.PosterPath" class="img-fluid rounded shadow" alt="@Model.Titulo" />
+
+            <!-- Infos -->
+            <ul class="list-group mt-4 shadow-sm">
+                <li class="list-group-item"><strong>Idioma:</strong> @Model.Lingua?.ToUpper()</li>
+                <li class="list-group-item"><strong>Duração:</strong> @Model.Duracao min</li>
+                <li class="list-group-item"><strong>Lançamento:</strong> @Model.DataLancamento?.ToString("dd/MM/yyyy")</li>
+                <li class="list-group-item"><strong>Nota Média:</strong> @Model.NotaMedia</li>
+                <li class="list-group-item"><strong>Latitude:</strong> @Model.Latitude?.ToString(CultureInfo.InvariantCulture)</li>
+                <li class="list-group-item"><strong>Longitude:</strong> @Model.Longitude?.ToString(CultureInfo.InvariantCulture)</li>
+            </ul>
+
+            <!-- PREVISÃO DO TEMPO (SEM PARTIAL) -->
+            @if (clima != null && clima.Daily != null)
+            {
+                <h4 class="mt-5">☀ Previsão do Tempo</h4>
+
+                <div class="card shadow-sm p-3 mt-3">
+                    <h5>@clima.Daily.Time[0]</h5>
+                    <p>Cidade Associada: @Model.CidadeReferencia</p>
+
+                    <p>🌡 Máx: @clima.Daily.Temperature_2m_Max[0] °C</p>
+                    <p>❄ Min: @clima.Daily.Temperature_2m_Min[0] °C</p>
+>>>>>>> origin/LucayanBranch
                 </div>
             }
         </div>
 
+<<<<<<< HEAD
         <!-- DESCRIÇÃO / TRAILER / ELENCO -->
+=======
+        <!-- DESCRIÇÃO + ELENCO + TRAILER -->
+>>>>>>> origin/LucayanBranch
         <div class="col-md-9">
 
             <h1 class="fw-bold">@Model.Titulo</h1>
             <h5 class="text-muted">@Model.TituloOriginal</h5>
 
+<<<<<<< HEAD
             <div class="mt-2 mb-3">
                 <span class="netflix-badge fs-6">@Model.Genero</span>
                 <span class="badge bg-warning text-dark fs-6">⭐ @Model.NotaMedia</span>
@@ -152,17 +209,42 @@
             @if (!string.IsNullOrEmpty(Model.TrailerUrl))
             {
                 <h3 class="mt-5">🎬 Trailer</h3>
+=======
+            <!-- Badges -->
+            <div class="mt-2 mb-3">
+                <span class="badge bg-primary fs-6">@Model.Genero</span>
+                <span class="badge bg-warning text-dark fs-6">⭐ @Model.NotaMedia</span>
+            </div>
+
+            <!-- Sinopse -->
+            <h4>Sinopse</h4>
+            <p>@Model.Sinopse</p>
+
+            <!-- Trailer -->
+            @if (!string.IsNullOrEmpty(Model.TrailerUrl))
+            {
+                <h3 class="mt-5">🎬 Trailer Oficial</h3>
+>>>>>>> origin/LucayanBranch
                 <div class="ratio ratio-16x9 shadow rounded">
                     <iframe src="@Model.TrailerUrl" allowfullscreen></iframe>
                 </div>
             }
 
+<<<<<<< HEAD
             <!-- ELENCO -->
             <h3 class="mt-5">👥 Elenco</h3>
 
             @if (elenco.Any())
             {
                 <ul class="list-group cast-list shadow-sm">
+=======
+            <!-- Elenco -->
+            <h3 class="mt-5">👥 Elenco Principal</h3>
+
+            @if (elenco.Any())
+            {
+                <ul class="list-group shadow-sm">
+>>>>>>> origin/LucayanBranch
                     @foreach (var ator in elenco)
                     {
                         <li class="list-group-item">@ator</li>
@@ -171,18 +253,31 @@
             }
             else
             {
+<<<<<<< HEAD
                 <p class="text-muted">Nenhum elenco registrado.</p>
+=======
+                <p class="text-muted">Nenhum elenco disponível.</p>
+>>>>>>> origin/LucayanBranch
             }
 
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- GALERIA -->
     <h3 class="mt-5 mb-3">🖼 Galeria de Imagens</h3>
 
     @if (imagens.Any())
     {
         <div class="row g-3 image-grid">
+=======
+    <!-- IMAGENS -->
+    <h3 class="mt-5 mb-3">🖼 Imagens do Filme</h3>
+
+    @if (imagens.Any())
+    {
+        <div class="row g-3">
+>>>>>>> origin/LucayanBranch
             @foreach (var img in imagens.Take(15))
             {
                 <div class="col-md-4">

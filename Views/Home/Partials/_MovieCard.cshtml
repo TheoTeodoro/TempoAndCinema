@@ -1,17 +1,19 @@
 ﻿@model TempoAndCinema.Dtos.FilmeExpandidoDto
 
-<div class="movie-card text-center">
-    <img class="movie-poster img-fluid rounded shadow-sm"
-         src="@($"https://image.tmdb.org/t/p/w300{Model.PosterPath}")"
-         alt="@Model.Titulo" />
+<a href="@Url.Action("Details", "Tmdb", new { id = Model.TmdbId })" style="text-decoration: none; color: inherit;">
+    <div class="movie-card text-center">
+        <img class="movie-poster img-fluid rounded shadow-sm"
+             src="@($"https://image.tmdb.org/t/p/w300{Model.PosterPath}")"
+             alt="@Model.Titulo" />
 
-    <div class="mt-2 movie-title">
-        <strong>@Model.Titulo</strong>
-        <div class="text-warning small fw-bold">
-            ⭐ @Model.NotaMedia
+        <div class="mt-2 movie-title">
+            <strong>@Model.Titulo</strong>
+            <div class="text-warning small fw-bold">
+                ⭐ @Model.NotaMedia
+            </div>
         </div>
     </div>
-</div>
+</a>
 
 <style>
 .movie-card {
