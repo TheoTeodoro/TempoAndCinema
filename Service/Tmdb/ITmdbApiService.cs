@@ -14,5 +14,7 @@ namespace TempoAndCinema.Services.Tmdb
         Task<TmdbConfigurationDto?> GetConfigurationAsync();
         Task<IEnumerable<FilmeExpandidoDto>> GetTrendingMoviesAsync();
         Task<IEnumerable<FilmeExpandidoDto>> GetNowPlayingMoviesAsync();
+        Task<TmdbSimilarMoviesDto?> GetSimilarMoviesAsync(int movieId);
+        Task<TmdbReviewResponseDto?> GetMovieReviewsAsync(int movieId);
     }
 }

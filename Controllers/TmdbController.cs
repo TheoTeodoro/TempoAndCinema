@@ -43,14 +43,15 @@ namespace TempoAndCinema.Controllers
 
             return View(response);
         }
-
+        
         // RF04 — Detalhes do filme via TMDb
         public async Task<IActionResult> Details(int id)
         {
             var movie = await _tmdb.GetMovieDetailsAsync(id);
             if (movie == null) return NotFound();
-            var existing = await _repo.GetByTmdbIdAsync(id);
 
+            // verifica se já existe no repo para buscar clima
+            var existing = await _repo.GetByTmdbIdAsync(id);
             if (existing != null && existing.Latitude.HasValue && existing.Longitude.HasValue)
             {
                 var clima = await _weatherService.GetWeatherAsync(
@@ -63,26 +64,31 @@ namespace TempoAndCinema.Controllers
             {
                 ViewBag.Weather = null;
             }
+
+            // chamadas TMDb adicionais
             var images = await _tmdb.GetMovieImagesAsync(id);
             var credits = await _tmdb.GetMovieCreditsAsync(id);
             var videos = await _tmdb.GetMovieVideosAsync(id);
+            var similar = await _tmdb.GetSimilarMoviesAsync(id);      // <-- filmes semelhantes
+            var reviews = await _tmdb.GetMovieReviewsAsync(id);      // <-- reviews / avaliações
             var config = await _tmdb.GetConfigurationAsync();
 
             var baseUrl = config?.Images?.Secure_Base_Url ?? "https://image.tmdb.org/t/p/";
             var posterSize = config?.Images?.Poster_Sizes?.LastOrDefault() ?? "w500";
             var backdropSize = config?.Images?.Backdrop_Sizes?.LastOrDefault() ?? "w780";
 
+            // enviar para a view via ViewBag
             ViewBag.BaseUrl = baseUrl;
             ViewBag.PosterSize = posterSize;
             ViewBag.BackdropSize = backdropSize;
             ViewBag.Images = images;
             ViewBag.Credits = credits;
             ViewBag.Videos = videos;
+            ViewBag.Similar = similar;
+            ViewBag.Reviews = reviews;
 
             return View(movie);
         }
-
-
 
         [HttpPost]
         public async Task<IActionResult> ImportToLocal(int tmdbId)

@@ -10,6 +10,9 @@ namespace TempoAndCinema.Dtos
 
     public class VideoDto
     {
+        [JsonPropertyName("name")] 
+        public string Name { get; set; }
+
         [JsonPropertyName("key")]
         public string Key { get; set; }
 

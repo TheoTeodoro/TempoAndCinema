@@ -10,13 +10,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="edb600d0-b880-4fcf-ad79-13aa6ca22850" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/Home/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Home/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/Home/Partials/_MovieCard.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Home/Partials/_MovieCard.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/Home/SearchResults.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Home/SearchResults.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Shared/_Layout.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/Tmdb/Index.cshtml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Views/Tmdb/Search.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Tmdb/Search.cshtml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dtos/TmdbReviewResponseDto.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dtos/TmdbSimilarMoviesDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/TmdbController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/TmdbController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dtos/TmdbVideosDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Dtos/TmdbVideosDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Service/Tmdb/ITmdbApiService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Service/Tmdb/ITmdbApiService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Service/Tmdb/TmdbApiService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Service/Tmdb/TmdbApiService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/Filmes/Create.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Filmes/Create.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/Filmes/Delete.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Filmes/Delete.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/Filmes/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Filmes/Details.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/Filmes/Edit.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Filmes/Edit.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/Filmes/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Filmes/Index.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/Tmdb/AdicionarLocalizacao.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Tmdb/AdicionarLocalizacao.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Views/Tmdb/Details.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/Views/Tmdb/Details.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +34,22 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Alicyrc"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/TheoTeodoro/TempoAndCinema.git",
+    "accountId": "2c5842c8-b8c7-4c70-b8d1-4dbe823c8087"
+  }
+}]]></component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Dtos/TmdbReviewResponseDto.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Dtos/TmdbSimilarMoviesDto.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -41,21 +63,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.TempoAndCinema: IIS Express.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "AlicyBranch",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.TempoAndCinema: IIS Express.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;AlicyBranch&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.TempoAndCinema: IIS Express">
     <configuration name="TempoAndCinema: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/TempoAndCinema.csproj" />

@@ -162,6 +162,33 @@ namespace TempoAndCinema.Services.Tmdb
             return result;
         }
         
+        public async Task<TmdbReviewResponseDto?> GetMovieReviewsAsync(int movieId)
+        {
+            string url = $"{BaseUrl}/movie/{movieId}/reviews?api_key={_apiKey}&language=pt-BR";
+
+            var response = await _http.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+                return null;  // evita quebrar a aplicação
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<TmdbReviewResponseDto>(json);
+        }
+
+        public async Task<TmdbSimilarMoviesDto?> GetSimilarMoviesAsync(int movieId)
+        {
+            string url = $"{BaseUrl}/movie/{movieId}/similar?api_key={_apiKey}&language=pt-BR";
+            
+                var response = await _http.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<TmdbSimilarMoviesDto>(json);
+
+            return result;
+        }
+
+        
         // === Trending ===
         public async Task<IEnumerable<FilmeExpandidoDto>> GetTrendingMoviesAsync()
         {
