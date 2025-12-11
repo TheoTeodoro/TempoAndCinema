@@ -1,0 +1,138 @@
+@model TempoAndCinema.ViewModels.HomePageViewModel
+
+@{
+    ViewData["Title"] = "Home — Tempo & Cinema";
+}
+
+<div class="container mt-4">
+
+    <!-- Barra de Pesquisa + Filtro -->
+    <div class="search-filter-bar mb-4 d-flex flex-wrap align-items-center">
+        <form asp-controller="Tmdb" asp-action="Search" method="get" class="d-flex flex-grow-1 me-2">
+            <input type="text" name="query" class="form-control" placeholder="Buscar filmes no TMDb..." />
+            <button type="submit" class="btn btn-primary ms-1">🔍</button>
+        </form>
+
+        <!-- Filtro lateral -->
+        <select class="form-select filter-select">
+            <option value="">Todos os gêneros</option>
+            <option value="Action">Ação</option>
+            <option value="Comedy">Comédia</option>
+            <option value="Drama">Drama</option>
+            <option value="Fantasy">Fantasia</option>
+            <option value="Horror">Terror</option>
+            <option value="Romance">Romance</option>
+        </select>
+    </div>
+    
+    <h2 class="section-title">🔥 Tendências da Semana</h2>
+    <div class="carousel-wrapper">
+        <button class="carousel-btn left" onclick="scrollCarousel('trending', -1)">‹</button>
+        <div id="trending" class="carousel">
+            @foreach (var filme in Model.Trending)
+            {
+                <partial name="Partials/_MovieCard" model="filme" />
+            }
+        </div>
+        <button class="carousel-btn right" onclick="scrollCarousel('trending', 1)">›</button>
+    </div>
+
+    <h2 class="section-title mt-4">🎬 Em Cartaz</h2>
+    <div class="carousel-wrapper">
+        <button class="carousel-btn left" onclick="scrollCarousel('nowplaying', -1)">‹</button>
+        <div id="nowplaying" class="carousel d-flex overflow-auto">
+            @foreach (var filme in Model.Lancamentos)
+            {
+                <partial name="Partials/_MovieCard" model="filme" />
+            }
+        </div>
+        <button class="carousel-btn right" onclick="scrollCarousel('nowplaying', 1)">›</button>
+    </div>
+
+    <h2 class="mt-4">📚 Catálogo A–Z</h2>
+    @if (Model.Catalogo.Any())
+    {
+        <partial name="~/Views/Home/Partials/_CatalogoAZ.cshtml" model="Model.Catalogo" />
+    }
+    else
+    {
+        <p class="text-muted">Nenhum filme importado ainda.</p>
+    }
+</div>
+
+<style>
+/* Fundo e cores gerais */
+body {
+    background-color: #111;
+    color: #f5f5f5;
+}
+.section-title {
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Barra de pesquisa e filtro */
+.search-filter-bar input {
+    padding: 10px 12px;
+    border-radius: 5px 0 0 5px;
+    border: none;
+    outline: none;
+    width: 250px;
+}
+.search-filter-bar input:focus {
+    width: 400px;
+}
+.search-filter-bar button {
+    border-radius: 0 5px 5px 0;
+}
+.filter-select {
+    width: 180px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #222;
+    color: #fff;
+    border: none;
+}
+
+/* Carrossel */
+.carousel-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+}
+.carousel {
+    display: flex; /* necessário */
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 10px 0;
+}
+
+.carousel::-webkit-scrollbar {
+    display: none; /* oculta scrollbar */
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(30,30,30,0.8);
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    width: 35px;
+    height: 60px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 5px;
+}
+.carousel-btn.left { left: 0; }
+.carousel-btn.right { right: 0; }
+
+</style>
+
+<script>
+function scrollCarousel(id, direction) {
+    const container = document.getElementById(id);
+    const scrollAmount = 232; // largura do card + gap
+    container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
+</script>

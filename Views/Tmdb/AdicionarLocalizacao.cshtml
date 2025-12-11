@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Adicionar Localização";
+}
+
+<div class="location-container">
+    <h2 class="page-title">Localização para: <span>@ViewBag.Titulo</span></h2>
+
+    <form asp-action="SalvarComLocalizacao" method="post" class="location-form">
+        <input type="hidden" name="tmdbId" value="@ViewBag.TmdbId" />
+
+        <div class="input-group">
+            <label>Cidade</label>
+            <input name="cidade" class="input-dark" required />
+        </div>
+
+        <div class="input-group">
+            <label>Latitude</label>
+            <input name="latitude"
+                   class="input-dark"
+                   type="text"
+                   value="@Model?.Latitude?.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture)"
+                   placeholder="Ex: -21.5483"
+                   pattern="\-?\d+(\.\d+)?"
+                   required />
+        </div>
+
+        <div class="input-group">
+            <label>Longitude</label>
+            <input name="longitude"
+                   class="input-dark"
+                   type="text"
+                   value="@Model?.Longitude?.ToString("0.######", System.Globalization.CultureInfo.InvariantCulture)"
+                   placeholder="Ex: -48.1234"
+                   pattern="\-?\d+(\.\d+)?"
+                   required />
+        </div>
+
+        <button class="btn-save">Salvar Filme</button>
+    </form>
+</div>
+
+<style>
+    /* Container da página */
+    .location-container {
+        background: #141414;
+        color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        max-width: 500px;
+        margin: 40px auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .page-title span {
+        color: #e50914;
+    }
+
+    .location-form .input-group {
+        margin-bottom: 20px;
+    }
+
+    .input-group label {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 6px;
+        color: #b3b3b3;
+    }
+
+    .input-dark {
+        width: 100%;
+        padding: 12px;
+        background: #333;
+        border: 1px solid #555;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        transition: 0.2s;
+    }
+
+    .input-dark:focus {
+        border-color: #e50914;
+        outline: none;
+        background: #444;
+    }
+
+    /* Botão estilizado estilo Netflix */
+    .btn-save {
+        width: 100%;
+        background: #e50914;
+        color: #fff;
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-save:hover {
+        background: #f6121d;
+    }
+</style>

@@ -1,0 +1,371 @@
+﻿@using TempoAndCinema.Dtos
+@model TempoAndCinema.Dtos.TmdbMovieDetailsDto
+@{
+    ViewData["Title"] = Model.Title;
+
+    var images = ViewBag.Images as dynamic;
+    var credits = ViewBag.Credits;
+    var creditsDto = ViewBag.Credits as TmdbCreditsDto;
+    var videos = ViewBag.Videos;
+    var similar = ViewBag.Similar;
+    var reviews = ViewBag.Reviews;
+
+    // CASTS ROBUSTOS — Converter dinâmico para List<T>
+    List<ImageDto> imageBackdrops = null;
+    List<ImageDto> imagePosters = null;
+    
+    if (images != null && images.Backdrops != null)
+    {
+        try
+        {
+            imageBackdrops = ((IEnumerable<dynamic>)images.Backdrops)
+                .Select(x => new ImageDto { File_Path = x.File_Path })
+                .ToList();
+        }
+        catch { }
+    }
+    
+    if (images != null && images.Posters != null)
+    {
+        try
+        {
+            imagePosters = ((IEnumerable<dynamic>)images.Posters)
+                .Select(x => new ImageDto { File_Path = x.File_Path })
+                .ToList();
+        }
+        catch { }
+    }
+
+    IEnumerable<CastDto> castList = null;
+    if (creditsDto != null && creditsDto.Cast != null)
+    {
+        castList = creditsDto.Cast;
+    }
+    
+    var similarDto = ViewBag.Similar as TmdbSimilarMoviesDto;
+    var reviewList = reviews as IEnumerable<TmdbReviewDto>;
+
+    string baseUrl = ViewBag.BaseUrl;
+    string posterSize = ViewBag.PosterSize;
+    string backdropSize = ViewBag.BackdropSize;
+}
+
+<style>
+    body {
+        background: #0d0d0d;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .movie-banner {
+        width: 100%;
+        height: 60vh;
+        background-size: cover;
+        background-position: center;
+        border-bottom: 4px solid #222;
+        position: relative;
+    }
+
+    .movie-banner::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 120px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0), #0d0d0d);
+    }
+
+    .movie-content {
+        padding: 40px;
+        display: flex;
+        gap: 30px;
+    }
+
+    .movie-poster {
+        width: 300px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+
+    .movie-info h1 {
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .movie-info p {
+        font-size: 18px;
+        opacity: 0.85;
+    }
+
+    .section-title {
+        font-size: 26px;
+        margin: 40px 0 20px 0;
+        border-left: 5px solid #e50914;
+        padding-left: 12px;
+        font-weight: bold;
+    }
+
+    /* CARROSSEL NETFLIX */
+    .carousel-container {
+        position: relative;
+        overflow: visible;
+        padding: 10px 0;
+        margin: 0 40px;
+    }
+
+    .carousel {
+        display: flex;
+        gap: 15px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding-bottom: 10px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .carousel::-webkit-scrollbar {
+        display: none;
+    }
+
+    .carousel-item {
+        min-width: 180px;
+        width: 180px;
+        height: 270px;
+        cursor: pointer;
+        transition: transform .3s;
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .carousel-item:hover {
+        transform: scale(1.05);
+    }
+
+    .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+    }
+
+    .car-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,.6);
+        color: white;
+        border: none;
+        padding: 12px 15px;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 10;
+        border-radius: 4px;
+        display: none;
+    }
+
+    .carousel-container:hover .car-btn {
+        display: block;
+    }
+
+    .car-btn.left { left: 10px; }
+    .car-btn.right { right: 10px; }
+
+    /* ELENCO */
+    .cast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 20px;
+    }
+
+    .cast-card {
+        text-align: center;
+    }
+
+    .cast-card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border: 3px solid #222;
+    }
+
+    /* TRAILER */
+    .trailer-container iframe {
+        width: 100%;
+        height: 450px;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    /* REVIEW */
+    .review {
+        background: #181818;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border-left: 4px solid #e50914;
+    }
+
+</style>
+
+
+@if (!string.IsNullOrEmpty(Model.Backdrop_Path))
+{
+    <div class="movie-banner"
+         style="background-image:url('@(baseUrl + backdropSize + Model.Backdrop_Path)')">
+    </div>
+}
+
+<div class="movie-content">
+    <img src="@($"{baseUrl}{posterSize}{Model.Poster_Path}")"
+         class="movie-poster" />
+
+    <div class="movie-info">
+        <h1>@Model.Title</h1>
+        <p><b>Título original:</b> @Model.Original_Title</p>
+        <p><b>Lançamento:</b> @Model.Release_Date</p>
+        <p><b>Duração:</b> @Model.Runtime min</p>
+        <p><b>Nota média:</b> ⭐ @Model.Vote_Average</p>
+        <p class="mt-4">@Model.Overview</p>
+
+        <form method="post" asp-action="ImportToLocal" class="mt-4">
+            <input type="hidden" name="tmdbId" value="@Model.Id" />
+            <button class="btn btn-danger">Salvar no sistema</button>
+        </form>
+    </div>
+</div>
+
+<!-- TRAILER -->
+@if (videos?.Results != null)
+{
+    List<VideoDto> lista = videos.Results;
+
+    // Primeiro tenta achar um trailer oficial do YouTube
+    var trailer = lista
+        .FirstOrDefault(v =>
+            v.Type != null &&
+            v.Type.Contains("Trailer", StringComparison.OrdinalIgnoreCase) &&
+            v.Site == "YouTube");
+
+    // Se não achar o trailer, pega qualquer vídeo do YouTube
+    if (trailer == null)
+    {
+        trailer = lista.FirstOrDefault(v => v.Site == "YouTube");
+    }
+
+    if (trailer != null)
+    {
+        <h2 class="section-title">Trailer Oficial</h2>
+
+        <div class="trailer-container">
+            <iframe 
+                src="https://www.youtube.com/embed/@(trailer.Key)"
+                allowfullscreen>
+            </iframe>
+        </div>
+    }
+}
+
+
+<!-- ELENCO -->
+@if (castList != null && castList.Count() > 0)
+{
+    <h2 class="section-title">Elenco</h2>
+    <div class="cast-grid">
+        @foreach (var actor in castList.Take(12))
+        {
+            <div class="cast-card">
+                <img src="@(actor.Profile_Path != null ? baseUrl + "w185" + actor.Profile_Path : "/img/no-avatar.png")" />
+                <p><b>@actor.Name</b></p>
+                <p style="opacity:.6">@actor.Character</p>
+            </div>
+        }
+    </div>
+}
+
+<!-- IMAGENS / BACKDROPS -->
+@if (imageBackdrops != null && imageBackdrops.Count() > 0)
+{
+    <h2 class="section-title">Imagens</h2>
+
+    <div class="carousel-container">
+        <button class="car-btn left" onclick="scrollCarousel('imgs', -400)">❮</button>
+        <button class="car-btn right" onclick="scrollCarousel('imgs', 400)">❯</button>
+
+        <div id="imgs" class="carousel">
+            @foreach (var img in imageBackdrops.Take(20))
+            {
+                <div class="carousel-item">
+                    <img src="@($"{baseUrl}{backdropSize}{img.File_Path}")"/>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- FILMES SIMILARES -->
+@if (similarDto?.Results != null && similarDto.Results.Count > 0)
+{
+    <h2 class="section-title">Filmes semelhantes</h2>
+
+    <div class="carousel-container">
+        <button class="car-btn left" onclick="scrollCarousel('sim', -400)">❮</button>
+        <button class="car-btn right" onclick="scrollCarousel('sim', 400)">❯</button>
+
+        <div id="sim" class="carousel">
+            @foreach (var m in similarDto.Results.Take(20))
+            {
+                if (string.IsNullOrEmpty(m.PosterPath)) { continue; }
+                <div class="carousel-item">
+                    <img src="@($"{baseUrl}{posterSize}{m.PosterPath}")" />
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (imagePosters != null && imagePosters.Count() > 0)
+{
+    <h2 class="section-title">Filmes semelhantes</h2>
+
+    <div class="carousel-container">
+        <button class="car-btn left" onclick="scrollCarousel('sim', -400)">❮</button>
+        <button class="car-btn right" onclick="scrollCarousel('sim', 400)">❯</button>
+
+        <div id="sim" class="carousel">
+            @foreach (var poster in imagePosters.Take(20))
+            {
+                <div class="carousel-item">
+                    <img src="@($"{baseUrl}{posterSize}{poster.File_Path}")" />
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- REVIEWS (TMDb não fornece diretamente a menos que implemente) -->
+@if (reviewList != null)
+{
+    <h2 class="section-title">Avaliações e Reviews</h2>
+
+    <div class="review">
+        <p><b>Usuário Anônimo:</b></p>
+        <p>Ótimo filme! Visual impecável e história emocionante.</p>
+    </div>
+
+    <div class="review">
+        <p><b>Cinéfilo 92:</b></p>
+        <p>Excelente trilha sonora e atuações consistentes.</p>
+    </div>
+}
+
+<script>
+    function scrollCarousel(type, amount) {
+        document.getElementById("carousel-" + type).scrollBy({
+            left: amount,
+            behavior: "smooth"
+        });
+    }
+</script>
