@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using TempoAndCinema.Dtos;
 using TempoAndCinema.Services.Tmdb;
+<<<<<<< HEAD
 using Microsoft.Extensions.Logging;
+=======
+>>>>>>> origin/LucayanBranch
 using TempoAndCinema.Data;
 using TempoAndCinema.Models;
 using TempoAndCinema.Service.Weather;
@@ -14,16 +17,27 @@ namespace TempoAndCinema.Controllers
     {
         private readonly ITmdbApiService _tmdb;
         private readonly IFilmeRepository _repo;
+<<<<<<< HEAD
         private readonly IWeatherApiService _weatherService;
         private readonly ILogger<TmdbController> _logger;
 
 
         public TmdbController(ITmdbApiService tmdb, IFilmeRepository repo, IWeatherApiService weather, ILogger<TmdbController> logger)
+=======
+
+        private readonly IWeatherApiService _weatherService;
+
+
+        public TmdbController(ITmdbApiService tmdb, IFilmeRepository repo, IWeatherApiService weather)
+>>>>>>> origin/LucayanBranch
         {
             _tmdb = tmdb;
             _repo = repo;
             _weatherService = weather;
+<<<<<<< HEAD
             _logger = logger;
+=======
+>>>>>>> origin/LucayanBranch
         }
 
 
@@ -45,15 +59,24 @@ namespace TempoAndCinema.Controllers
 
             return View(response);
         }
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> origin/LucayanBranch
         // RF04 — Detalhes do filme via TMDb
         public async Task<IActionResult> Details(int id)
         {
             var movie = await _tmdb.GetMovieDetailsAsync(id);
             if (movie == null) return NotFound();
+<<<<<<< HEAD
 
             // verifica se já existe no repo para buscar clima
             var existing = await _repo.GetByTmdbIdAsync(id);
+=======
+            var existing = await _repo.GetByTmdbIdAsync(id);
+
+>>>>>>> origin/LucayanBranch
             if (existing != null && existing.Latitude.HasValue && existing.Longitude.HasValue)
             {
                 var clima = await _weatherService.GetWeatherAsync(
@@ -66,6 +89,7 @@ namespace TempoAndCinema.Controllers
             {
                 ViewBag.Weather = null;
             }
+<<<<<<< HEAD
 
             // chamadas TMDb adicionais
             var images = await _tmdb.GetMovieImagesAsync(id);
@@ -103,12 +127,24 @@ namespace TempoAndCinema.Controllers
             var backdropSize = ChooseClosestSize(config?.Images?.Backdrop_Sizes, 780);
 
             // enviar para a view via ViewBag
+=======
+            var images = await _tmdb.GetMovieImagesAsync(id);
+            var credits = await _tmdb.GetMovieCreditsAsync(id);
+            var videos = await _tmdb.GetMovieVideosAsync(id);
+            var config = await _tmdb.GetConfigurationAsync();
+
+            var baseUrl = config?.Images?.Secure_Base_Url ?? "https://image.tmdb.org/t/p/";
+            var posterSize = config?.Images?.Poster_Sizes?.LastOrDefault() ?? "w500";
+            var backdropSize = config?.Images?.Backdrop_Sizes?.LastOrDefault() ?? "w780";
+
+>>>>>>> origin/LucayanBranch
             ViewBag.BaseUrl = baseUrl;
             ViewBag.PosterSize = posterSize;
             ViewBag.BackdropSize = backdropSize;
             ViewBag.Images = images;
             ViewBag.Credits = credits;
             ViewBag.Videos = videos;
+<<<<<<< HEAD
             ViewBag.Similar = similar;
             ViewBag.Reviews = reviews;
 
@@ -134,10 +170,17 @@ namespace TempoAndCinema.Controllers
             {
                 _logger.LogWarning(ex, "Failed to log TMDb image debug info");
             }
+=======
+>>>>>>> origin/LucayanBranch
 
             return View(movie);
         }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/LucayanBranch
         [HttpPost]
         public async Task<IActionResult> ImportToLocal(int tmdbId)
         {

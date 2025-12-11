@@ -319,6 +319,7 @@ namespace TempoAndCinema.Controllers
             }
         }
 
+<<<<<<< HEAD
 		[HttpGet]
 		public async Task<IActionResult> ExportCsv(int id)
 		{
@@ -353,4 +354,7 @@ namespace TempoAndCinema.Controllers
 		}
 
 	}
+=======
+    }
+>>>>>>> origin/LucayanBranch
 }
